@@ -7,10 +7,14 @@ One FastAPI + vanilla-JS app, two tabs:
   intelligence dashboard: CSI-division donut, who-pays split, catalogue coverage,
   filters wired to every chart, and a document viewer that opens on the cited
   page with the quoted sentence highlighted.
-- **Bid Decision (UC#4, static preview this batch)** — the designed evaluation
-  view of the customer-owned scorecard, seeded with the customer's real
-  spreadsheet (52.5 / 70 = 75, HIGH PRIORITY, BID). The interactive build
-  (editable weights, knockouts, gate, audit log) is the next batch.
+- **Bid Decision (UC#4, working)** — the customer-owned go/no-go scorecard,
+  seeded with the customer's real spreadsheet rows. Live evaluation with four
+  rule sources (AI-with-quote / CRM named query / derived code / human one-tap),
+  a setup mode with draggable weights and a live what-if against a SAMPLE
+  portfolio, per-rule knockouts, a bid threshold that gates the scope
+  analysis, a confirm-with-consequences save, and a persona-attributed audit
+  log. An upload is scored FIRST; only bids that clear the gate reach the
+  expensive extraction (with an explicit "Run anyway" override).
 
 ---
 
@@ -102,7 +106,7 @@ a fresh boot is the real pipeline, not an animation.
 .venv/bin/python selftest.py          # Windows: .venv\Scripts\python selftest.py
 ```
 
-Expected: `454 checks, 0 failures` (count grows as lines change), no browser,
+Expected: `477 checks, 0 failures` (count grows as lines change), no browser,
 no live calls, done in under a minute.
 
 ---
@@ -110,7 +114,9 @@ no live calls, done in under a minute.
 ## Using the demo
 
 - **Upload specification** (button, or drag a file anywhere onto the top bar):
-  accepts `.docx` and `.pdf`. Word files convert to PDF server-side so every
+  accepts `.docx` and `.pdf`. A document-type gate screens uploads first:
+  obvious non-scope documents (insurance certificates, invoices, resumes) are
+  rejected with a plain explanation before any scoring or extraction runs. Word files convert to PDF server-side so every
   citation has a page number and one viewer serves both formats. New documents
   run live against Gemini (~2-4 min for a 36-page manual, 3 extraction calls +
   1 ranking call); re-analyzing a known document is instant (cache).
@@ -130,8 +136,12 @@ no live calls, done in under a minute.
 - Rehearse once with an upload in place, not only the clean seed.
 - The scanned-PDF refusal is a feature: feed it an image-only PDF and it
   explains why it extracted nothing rather than guessing.
-- Everything labeled SAMPLE is fabricated (the catalogue, the CRM evidence on
-  the Bid Decision preview). The document and every quote from it are real.
+- Everything labeled SAMPLE is fabricated (the catalogue, the mini-CRM, the
+  derived-formula inputs, the 14-bid portfolio). The document, every quote from
+  it, and the scorecard rows themselves are real.
+- The strongest UC#4 beat: drag a weight in Scorecard setup and watch the
+  what-if panel; then arm a knockout or raise the threshold, save, re-score,
+  and show the scope tab blocked by the gate — with the Run-anyway override.
 
 ---
 
@@ -174,10 +184,15 @@ pipeline/convert.py     docx -> PDF (LibreOffice), PDF -> page text (PyMuPDF)
 pipeline/normalize.py   CSI code hygiene + MasterFormat divisions
 pipeline/verify.py      quote gate, highlight rects, responsibility + quantity checks
 pipeline/match.py       catalogue funnel: hard filter -> semantic rank -> top 3 / gap
-pipeline/run.py         orchestrator with stage callbacks (extraction chunking lives here)
+pipeline/run.py         orchestrator: doc-type gate -> UC#4 scoring -> bid gate -> extraction
+pipeline/evaluate.py    UC#4 engine: rule partition by source, deterministic aggregation
+pipeline/scorecard.py   scorecard store: seed + runtime versioning + server-side diff audit
 static/                 vanilla JS front end (no framework, no build, no CDN)
 data/seed/              the real sample document (.docx + its converted .pdf)
 data/sample_catalogue.json  fabricated SAMPLE price book (no prices), see gen_catalogue.py
+data/scorecard_seed.json    the customer's real scorecard rows (seed; runtime edits go to data/runtime/)
+data/sample_crm.json        fabricated SAMPLE mini-CRM + derived-formula inputs
+data/sample_portfolio.json  fabricated SAMPLE 14-bid portfolio for the what-if panel
 cache/                  committed model-response cache for the seed run
 selftest.py             acceptance checks
 ```
@@ -186,8 +201,12 @@ selftest.py             acceptance checks
 
 ```
 GET  /            the app
-GET  /state       full app state (doc meta, lines, dashboard inputs, processing status)
+GET  /state       full app state (doc, evaluation, scope lines, scorecard, audit, portfolio)
 POST /upload      multipart file -> background analysis (poll /state)
-POST /reset       clear cache, drop uploads, reseed; next run is live
+POST /reset       clear cache + uploads, restore seed scorecard + audit, re-run live
 GET  /page        ?doc=<id>&n=<page>&scale=<1..3> -> rendered page PNG
+PUT  /scorecard   save scorecard changes {scorecard, persona, flips_note} -> version bump + audit
+POST /evaluation/score    one-tap human score {rule_id, score|null, persona}
+POST /evaluation/rerun    re-score the current document under the current scorecard
+POST /scope/run-anyway    run the scope extraction although the bid gate failed
 ```

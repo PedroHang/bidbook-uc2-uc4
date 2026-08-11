@@ -19,24 +19,28 @@
       <button id="tab-scope" class="tab" data-action="tab" data-tab="scope">Scope Intelligence</button>
     </nav>
     <div class="hdr-right">
+      <label class="persona-wrap" title="Acting as — audit entries carry this persona">
+        <span class="persona-label">acting as</span>
+        <select id="persona-select" data-select="persona" class="persona-select"></select>
+      </label>
       <span class="proj-chip"><span class="dot"></span><span id="project-chip">loading…</span></span>
-      <button class="gear" data-action="reset" title="Clear cached run and start live">&#9881;</button>
+      <button class="gear" data-action="reset" title="Clear cached run, restore the seed scorecard, start live">&#9881;</button>
     </div>
   </header>
 
   <div class="pipeline">
     <span class="pipe-label">PIPELINE</span>
-    <span class="pipe-chip">Invitation received</span>
+    <span class="pipe-chip">Document received</span>
     <span class="pipe-arrow">&#8594;</span>
-    <button class="pipe-chip pipe-decision" data-action="tab" data-tab="decision">Bid Decision: BID
-      <span class="pipe-sub">52.5 / 70</span></button>
+    <button id="pipe-decision" class="pipe-chip pipe-decision" data-action="tab" data-tab="decision">Bid Decision</button>
     <span class="pipe-arrow">&#8594;</span>
-    <span id="pipe-scope" class="pipe-chip">Scope analysis</span>
+    <button id="pipe-scope" class="pipe-chip" data-action="tab" data-tab="scope">Scope analysis</button>
     <span class="pipe-spacer"></span>
-    <span class="pipe-note">Every figure below is computed from the extracted lines, not by the model.</span>
+    <span class="pipe-note">Every figure below is computed in code from the extracted data, never by the model.</span>
   </div>
 
   <div id="view" class="view"></div>
+  <div id="overlay"></div>
 </div>
 <script src="/static/app.js"></script>
 </body>

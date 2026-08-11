@@ -1,0 +1,33 @@
+{
+  "_note": "FABRICATED SAMPLE mini-CRM behind the named queries, and the SAMPLE inputs for the derived formulas. Every UI surface showing this data is tagged SAMPLE. In production these are named SOQL queries and real field reads inside Salesforce.",
+  "project": {
+    "client_name": "Meridian Property Group",
+    "bid_due_days_from_now": 24,
+    "project_city": "Fort Worth, TX",
+    "distance_to_nearest_office_miles": 84
+  },
+  "accounts": [
+    {"name": "Meridian Property Group", "type": "Developer / Landlord", "footprint": "Regional — 11 properties across TX and OK",
+     "relationship": "No prior BidBook projects", "won": 0, "lost": 0},
+    {"name": "Trellis Construction Services", "type": "GC", "footprint": "DFW metro",
+     "relationship": "2 projects won, 1 lost, last 18 months", "won": 2, "lost": 1}
+  ],
+  "queries": {
+    "existing_client": {
+      "answer": "No — Meridian Property Group has no prior projects in the org",
+      "score": 3,
+      "records": ["Account: Meridian Property Group — 0 won / 0 lost"]
+    },
+    "customer_quality_history": {
+      "answer": "Good probability of future opportunities — regional developer, active pipeline",
+      "score": 4,
+      "records": ["Account: Meridian Property Group — footprint 11 properties TX/OK",
+                  "2 open opportunities logged for this account"]
+    },
+    "local_or_regional": {
+      "answer": "Regional — multiple locations",
+      "score": 5,
+      "records": ["Account: Meridian Property Group — footprint 11 properties across TX and OK"]
+    }
+  }
+}

@@ -67,6 +67,101 @@ def extract_prompt(page_texts: List[str], first_page: int) -> str:
 
 
 # ---------------------------------------------------------------------------
+# Document-type gate
+# ---------------------------------------------------------------------------
+
+class DocGate(BaseModel):
+    """Is this document worth extracting scope lines from at all?"""
+    is_scope_document: bool = Field(description="True only if this is a construction scope/specification document: a spec book or project manual, a landlord workletter, an exhibit describing scope of work, or an ITB package that contains scope. False for anything else.")
+    doc_type: str = Field(description="Short name for what the document actually is, e.g. 'landlord workletter', 'specification manual', 'certificate of insurance', 'invoice', 'resume', 'lease agreement'.")
+    reason: str = Field(description="One sentence, plain language, naming the evidence: what on the first pages says it is (or is not) a scope document.")
+
+
+GATE_SYSTEM = """You screen documents for a construction bid tool. The tool extracts
+scope-of-work lines, so only construction scope/specification documents should
+pass: spec books, project manuals, landlord workletters, scope exhibits, ITB
+packages containing scope. Everything else is rejected: insurance certificates,
+invoices, contracts without scope, resumes, drawings-only sets, marketing PDFs.
+Judge ONLY from the text given. When genuinely unsure, pass it through
+(is_scope_document=true) and say so in the reason — a false rejection costs
+more than a wasted extraction."""
+
+
+def gate_prompt(first_pages_text: str) -> str:
+    return (
+        "Classify the document whose opening pages read as follows.\n\n"
+        "=== OPENING PAGES ===\n" + first_pages_text[:12000]
+    )
+
+
+# ---------------------------------------------------------------------------
+# UC#4 — document-source rule scoring
+# ---------------------------------------------------------------------------
+
+class RuleScore(BaseModel):
+    """The model's proposal for ONE document-source scorecard rule."""
+    rule_id: str = Field(description="The rule id, copied from the input.")
+    abstain: bool = Field(default=False, description="True when the document does not answer this rule. Abstaining is correct and expected; never guess.")
+    proposed_score: int = Field(default=0, ge=0, le=5, description="1-5 per the rule's anchors. 0 when abstaining.")
+    verbatim_quote: str = Field(default="", description="The exact sentence(s) the score is based on, copied verbatim from the document. Empty when abstaining.")
+    page_hint: int = Field(default=0, description="1-based page the quote appears on, from the page markers. 0 when abstaining.")
+    rationale: str = Field(default="", description="One short sentence: how the quote maps to the anchor chosen (or why abstaining).")
+
+
+class DocRuleScores(BaseModel):
+    scores: List[RuleScore]
+
+
+SCORE_SYSTEM = """You score a construction bid against a customer's go/no-go scorecard.
+You are given ONLY the rules whose answer can come from the document itself.
+
+Hard rules, none negotiable:
+- Score each rule 1-5 strictly per its stated anchors. The anchors are the
+  customer's rubric, not yours.
+- verbatim_quote must be copied EXACTLY from the document text; a machine
+  checks it as an exact substring and discards paraphrases.
+- If the document does not answer a rule, abstain. Abstention is a correct
+  answer, never a failure. Never guess from context or general knowledge.
+- Never do arithmetic. Never total anything. Never mention other rules.
+- Apply the customer's scoring instructions where given; they refine the
+  anchors, they never override the verbatim-quote or abstention rules."""
+
+
+def score_prompt(rules: List[dict], instructions: str, page_texts: List[str]) -> str:
+    parts = ["Score the following rules against the document below.", ""]
+    for r in rules:
+        parts.append(f"RULE {r['id']}: {r['name']}")
+        parts.append(f"  anchors: {r['anchors']}")
+    if instructions.strip():
+        parts += ["", "CUSTOMER SCORING INSTRUCTIONS:", instructions.strip()]
+    parts += ["", "=== DOCUMENT, PAGE-TAGGED ==="]
+    for i, t in enumerate(page_texts):
+        parts.append(f"=== PAGE {i + 1} ===")
+        parts.append(t)
+    return "\n".join(parts)
+
+
+class Narrative(BaseModel):
+    pros: List[str] = Field(description="3-5 short bullets FOR pursuing this bid, each grounded in one scored rule.")
+    cons: List[str] = Field(description="3-5 short bullets AGAINST, each grounded in one scored rule.")
+
+
+NARRATIVE_SYSTEM = """You write the pros/cons summary for a bid decision AFTER the score has
+been computed. You are given the scored rules and the final verdict. Your text
+must agree with the numbers you are given — you never produce or adjust a
+number, never state a total, and never contradict the verdict. Each bullet
+names the fact from one rule, under 15 words, no fluff."""
+
+
+def narrative_prompt(lines: List[dict], verdict: str, rating: str) -> str:
+    parts = [f"Verdict already computed: {verdict} ({rating}). Scored rules:", ""]
+    for l in lines:
+        s = "unscored (needs human)" if l.get("needs_human") else f"score {l['score']} x weight {l['weight']}"
+        parts.append(f"- {l['name']}: {s}. {l.get('evidence','')}")
+    return "\n".join(parts)
+
+
+# ---------------------------------------------------------------------------
 # Catalogue ranking
 # ---------------------------------------------------------------------------
 

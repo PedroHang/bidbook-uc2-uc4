@@ -7,6 +7,7 @@ Run:  .venv/bin/python selftest.py
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from collections import Counter
@@ -17,7 +18,7 @@ import pymupdf
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 
-from pipeline import convert, normalize, run, verify  # noqa: E402
+from pipeline import convert, evaluate, normalize, run, scorecard, verify  # noqa: E402
 
 CHECKS = 0
 FAILS: list[str] = []
@@ -46,8 +47,10 @@ def main() -> int:
     check(normalize.normalize_csi("990000")[2] is not None, "inactive division reports a problem")
 
     # --- full pipeline over the seed (cache-served) ---
-    res = run.analyze(seed)
+    sc = scorecard.current()
+    res = run.analyze(seed, sc)
     lines = res["lines"]
+    check(lines is not None, "seed passes the bid gate, so scope lines exist")
     doc = res["doc"]
     check(doc["pages"] >= 30, f"seed parsed with a real page count (got {doc['pages']})")
     check(doc["converted"] is True, "seed docx marked as converted")
@@ -115,6 +118,74 @@ def main() -> int:
         check(True, "text-free PDF raises ScannedPdfError")
     finally:
         scanned.unlink(missing_ok=True)
+
+    # ---------------------------------------------------------- UC#4 checks
+    ev = res["evaluation"]
+    # partition guarantee: human rules never carry model output
+    for l in ev["lines"]:
+        if l["source"] == "human":
+            check(l["score"] is None and l["needs_human"], f"{l['rule_id']} human rule unscored by machines")
+        if l["source"] == "document" and l.get("verified"):
+            check(squash(l["quote"]) != "", f"{l['rule_id']} verified doc rule carries a quote")
+            check(len(l["rects"]) > 0, f"{l['rule_id']} verified doc rule has rects")
+    # arithmetic: recompute totals from the lines and compare exactly
+    scored = [l for l in ev["lines"] if l["score"] is not None]
+    total = round(sum(l["score"] * l["weight"] for l in scored), 1)
+    mx = round(sum(5 * l["weight"] for l in scored), 1)
+    check(ev["total"] == total, f"evaluation total {ev['total']} == recomputed {total}")
+    check(ev["max"] == mx, f"evaluation max {ev['max']} == recomputed {mx} (unscored rules excluded)")
+    check(ev["normalized"] == round(total / mx * 100), "normalized matches recomputation")
+    check(ev["scored_count"] == len(scored), "scored_count partition")
+    # narrative is generated after totals and never carries a number contract violation
+    if ev["narrative"]:
+        check(ev["narrative"]["generated_after_total"] is True, "narrative flagged post-total")
+
+    # knockout + threshold gate, purely deterministic — no model involved.
+    # knockouts live on the LINE snapshot (an evaluation keeps the scorecard it
+    # was scored under), so the test arms it there, as a re-run would.
+    ko_lines = json.loads(json.dumps(ev["lines"]))
+    for l in ko_lines:
+        if l["rule_id"] == "project_fit":
+            l["knockout"] = {"max_trigger_score": 2}
+    agg = evaluate.reaggregate(sc, ko_lines)
+    check("Project Fit" in agg["knockouts_triggered"], "knockout triggers on the seed's retail score")
+    check(agg["verdict"] == "NO-BID", "knockout forces NO-BID regardless of total")
+    check(agg["normalized"] == ev["normalized"], "knockout does not hide the computed score")
+    sc3 = json.loads(json.dumps(sc))
+    sc3["threshold"] = 95
+    agg3 = evaluate.reaggregate(sc3, ev["lines"])
+    check(agg3["verdict"] == "NO-BID" and agg3["gate"]["below_threshold"], "threshold gate flips the verdict")
+    check(not agg3["gate"]["passed"], "gate reports failed below threshold")
+
+    # scorecard store: save produces a version bump + audit diff; reset restores seed
+    scorecard.reset()
+    base = scorecard.current()
+    edited = json.loads(json.dumps(base))
+    edited["rules"][0]["weight"] = 2.5
+    edited["threshold"] = 65
+    out, changes = scorecard.save(edited, "marcus", "test note")
+    check(out["version"] == base.get("version", 1) + 1, "save bumps the version")
+    check(len(changes) == 2, f"diff finds exactly the 2 edits (got {len(changes)})")
+    log = scorecard.audit_log()
+    check(log and log[0]["persona"]["id"] == "marcus", "audit entry carries the persona")
+    check(log[0]["changes"] == changes, "audit entry records the server-computed diff")
+    bad = json.loads(json.dumps(base))
+    bad["rules"][0]["weight"] = 9
+    try:
+        scorecard.save(bad, "dana")
+        check(False, "invalid weight must be rejected")
+    except ValueError:
+        check(True, "invalid weight rejected")
+    scorecard.reset()
+    check(scorecard.current().get("version", 1) == base.get("version", 1), "reset restores the seed version")
+    check(scorecard.audit_log() == [], "reset clears the audit log")
+
+    # document-type gate: deterministic fast-reject needs no model
+    try:
+        run.doc_gate(["ACORD CERTIFICATE OF LIABILITY INSURANCE\nThis certificate is issued as a matter of information."], use_cache=True)
+        check(False, "COI text must be rejected by the deterministic gate")
+    except run.NotScopeDocError as exc:
+        check("insurance" in exc.doc_type, "COI rejected with the right doc type")
 
     # quote verifier is whitespace/smart-quote tolerant but not fuzzy
     check(verify.find_quote("Landlord shall provide", ["a Landlord  shall\nprovide b"], 1) == 1,

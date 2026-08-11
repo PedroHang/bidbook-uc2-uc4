@@ -1,0 +1,28 @@
+{
+ "scores": [
+  {
+   "rule_id": "project_fit",
+   "abstain": false,
+   "proposed_score": 2,
+   "verbatim_quote": "Drive Thru Cafe Workletter",
+   "page_hint": 1,
+   "rationale": "The document specifies requirements for a Starbucks drive-thru cafe, which is a retail facility."
+  },
+  {
+   "rule_id": "real_or_budgetary",
+   "abstain": true,
+   "proposed_score": 0,
+   "verbatim_quote": "",
+   "page_hint": 0,
+   "rationale": "The document does not explicitly state whether this is a funded, real project or a budgetary exercise."
+  },
+  {
+   "rule_id": "payment_terms",
+   "abstain": true,
+   "proposed_score": 0,
+   "verbatim_quote": "",
+   "page_hint": 0,
+   "rationale": "The document does not detail standard net payment terms for construction bids."
+  }
+ ]
+}

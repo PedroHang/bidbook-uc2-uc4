@@ -1,0 +1,50 @@
+{
+  "_note": "Seed scorecard = the customer's real Project ScoreCard.xlsx rows, names, anchors and weights mirrored exactly (52.5/70 = 75 on their own example). Sources assigned per the UC#4 BRD. Runtime edits live in data/runtime/scorecard.json, never here.",
+  "id": "schaffhouser-gonogo",
+  "name": "Schaffhouser Go / No-Go",
+  "version": 1,
+  "threshold": 60,
+  "gate_enforced": true,
+  "instructions": "",
+  "bands": [
+    {"min": 75, "label": "HIGH PRIORITY"},
+    {"min": 55, "label": "PURSUE"},
+    {"min": 40, "label": "MARGINAL"},
+    {"min": 0, "label": "PASS"}
+  ],
+  "rules": [
+    {"id": "project_fit", "name": "Project Fit", "source": "document", "weight": 2, "active": true, "knockout": null,
+     "anchors": {"5": "Industrial", "4": "Commercial building", "3": "Municipal", "2": "Retail", "1": "Education"}},
+    {"id": "customer_quality", "name": "Customer Quality", "source": "crm", "weight": 1, "active": true, "knockout": null,
+     "crm_query_key": "customer_quality_history",
+     "anchors": {"5": "Strong history, repeat opportunities certain", "4": "Good probability of future opportunities", "3": "Some probability", "2": "Little", "1": "One-off"}},
+    {"id": "local_office", "name": "Local to a Schaffhouser Office?", "source": "derived", "weight": 1, "active": true, "knockout": null,
+     "derived_formula_key": "distance_to_office",
+     "anchors": {"5": "Within 60 mile radius", "2": "Outside 60 mile radius"}},
+    {"id": "bid_position", "name": "Bid Position (How Many Bidders?)", "source": "human", "weight": 2, "active": true, "knockout": null,
+     "anchors": {"5": "Single source", "4": "One of two", "3": "One of three", "2": "Unknown", "1": "More than three"}},
+    {"id": "labor_availability", "name": "Labor Availability", "source": "human", "weight": 1.5, "active": true, "knockout": null,
+     "anchors": {"5": "Region desperately needs work", "4": "Yes", "3": "Possibly", "2": "Not really", "1": "No"}},
+    {"id": "real_or_budgetary", "name": "Real Project or Budgetary?", "source": "document", "weight": 1, "active": true, "knockout": null,
+     "anchors": {"5": "Real, funded project", "1": "Budgetary pricing exercise"}},
+    {"id": "local_or_regional", "name": "Local Customer or Regional?", "source": "crm", "weight": 1, "active": true, "knockout": null,
+     "crm_query_key": "local_or_regional",
+     "anchors": {"5": "Regional, multiple locations", "3": "Local"}},
+    {"id": "payment_terms", "name": "Net Payment Terms", "source": "document", "weight": 1.5, "active": true, "knockout": null,
+     "anchors": {"5": "Net 30 days", "4": "Net 60 days", "3": "Net 90 days", "1": "Longer than 90 days"}},
+    {"id": "bid_timeframe", "name": "Bid Time Frame", "source": "derived", "weight": 1, "active": true, "knockout": null,
+     "derived_formula_key": "bid_timeframe",
+     "anchors": {"5": "5 weeks", "4": "4 weeks", "3": "3 weeks", "2": "2 weeks", "1": "1 week"}},
+    {"id": "existing_client", "name": "Existing Client", "source": "crm", "weight": 2, "active": true, "knockout": null,
+     "crm_query_key": "existing_client",
+     "anchors": {"5": "Yes", "3": "No"}}
+  ],
+  "suggested_rules": [
+    {"id": "design_completeness", "name": "Design Completeness", "source": "document", "weight": 1,
+     "anchors": {"5": "Full CDs, addenda current", "3": "DD-level, gaps flagged", "1": "Napkin scope, heavy assumptions"},
+     "why": "Top-ranked document-extractable factor in published bid/no-bid research; incomplete design is the classic margin killer."},
+    {"id": "bonding_requirements", "name": "Bonding Requirements", "source": "document", "weight": 1,
+     "anchors": {"5": "None required", "3": "Standard P&P bond", "1": "Unusual bonding or capacity strain"},
+     "why": "Document-extractable and frequently decisive for specialty contractors near their bonding capacity."}
+  ]
+}
