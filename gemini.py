@@ -31,6 +31,19 @@ HERE = Path(__file__).resolve().parent
 CACHE_DIR = HERE / "cache"
 CACHE_DIR.mkdir(exist_ok=True)
 
+# .env in the repo root, same convention as the sibling demos.
+# A key already exported in the shell always wins over the file.
+_ENV_FILE = HERE / ".env"
+if _ENV_FILE.exists():
+    for _raw in _ENV_FILE.read_text(encoding="utf-8").splitlines():
+        _line = _raw.strip()
+        if not _line or _line.startswith("#") or "=" not in _line:
+            continue
+        _k, _v = _line.split("=", 1)
+        _k, _v = _k.strip(), _v.strip().strip('"').strip("'")
+        if _k and not os.environ.get(_k):
+            os.environ[_k] = _v
+
 _LOCK = threading.RLock()
 _PROVENANCE = "live"          # weakest-link across the current run
 _WARNINGS: list[str] = []
