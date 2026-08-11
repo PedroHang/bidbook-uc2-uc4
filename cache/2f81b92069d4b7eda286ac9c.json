@@ -1,0 +1,229 @@
+{
+ "lines": [
+  {
+   "csi_raw": "",
+   "scope_summary": "Perform soil testing that complies with the soil specifications provided by the tenant.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Soils: Landlord shall perform soil testing in compliance with tenant provided soil specifications.",
+   "page_hint": 13,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "",
+   "scope_summary": "Ensure newly planted trees have a minimum caliper and height.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Trees: In no case will the caliper of newly planted trees be less than 2” and stand less than 8'-0\" tall.",
+   "page_hint": 13,
+   "quantity_stated": "2”, 8'-0\"",
+   "excluded": false
+  },
+  {
+   "csi_raw": "",
+   "scope_summary": "Do not permit artificial turf grass, seeds, or straw on the site.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Turf: No artificial turf grass, seeds, and/or straw are permitted on Tenant's site.",
+   "page_hint": 13,
+   "quantity_stated": "",
+   "excluded": true
+  },
+  {
+   "csi_raw": "",
+   "scope_summary": "Maintain a non-vegetated strip adjacent to the building facade.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "An 18” non-vegetated strip shall be maintained adjacent to building façade.",
+   "page_hint": 13,
+   "quantity_stated": "18”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "",
+   "scope_summary": "Furnish and install xeriscape landscaping compliant with tenant standards and local regulations.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Design: Landlord shall furnish and install xeriscape landscape in compliance with tenant provided landscape standards and local regulations.",
+   "page_hint": 14,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "333100",
+   "scope_summary": "Permit, furnish, and install a dedicated sanitary sewer waste line into the premises.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "General: Permit, furnish, install 5'-0\" inside of Premises at Tenant’s back of house, a labeled 4” sanitary sewer waste line dedicated for Tenant’s use.",
+   "page_hint": 14,
+   "quantity_stated": "5'-0\", 4”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "333100",
+   "scope_summary": "Hydro flush and video scope the sewer lateral up to the connection with the city sewer main.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall hydro flush and video scope Tenant's sewer lateral to connection with city sewer main.",
+   "page_hint": 14,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "033410",
+   "scope_summary": "Provide a subsurface stormwater retention system accommodating site plans and jurisdictional requirements.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "System: Provide a subsurface stormwater retention system to accommodate Tenant's building configuration, site circulation, patio, site amenities, and jurisdictional requirements as defined in the Landlord's approved site plan.",
+   "page_hint": 14,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "335100",
+   "scope_summary": "Gas Distribution scope is excluded/not applicable.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "N/A",
+   "page_hint": 14,
+   "quantity_stated": "",
+   "excluded": true
+  },
+  {
+   "csi_raw": "335100",
+   "scope_summary": "Install a gas meter or sub-meter outside the space and extend service to the back of house with shut off valve and tee.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Extend service to a location 5'-0\" inside of Premises at Tenant's back of house with shut off valve and tee.",
+   "page_hint": 15,
+   "quantity_stated": "5'-0\"",
+   "excluded": false
+  },
+  {
+   "csi_raw": "073000",
+   "scope_summary": "Provide a fully adhered or mechanically fastened EPDM or TPO roofing system.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "System: Landlord shall provide fully adhered or mechanically fastened 60 Mils (nominal thickness) EPDM or TPO roofing system.",
+   "page_hint": 16,
+   "quantity_stated": "60 Mils",
+   "excluded": false
+  },
+  {
+   "csi_raw": "073000",
+   "scope_summary": "Ensure roof insulation meets minimum prescriptive values or a specified R-value.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Insulation shall be minimum R-38 or comply with the minimum prescriptive values outlined in the IECC (International Energy Conservation Code).",
+   "page_hint": 16,
+   "quantity_stated": "R-38",
+   "excluded": false
+  },
+  {
+   "csi_raw": "073000",
+   "scope_summary": "Furnish and install rooftop penetrations, curbs, and associated flashings.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Penetrations: Landlord shall furnish and install rooftop penetrations, curbs, and associated flashings.",
+   "page_hint": 17,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "073000",
+   "scope_summary": "Furnish and install a jurisdictionally approved rooftop drainage system tied to the storm water management system.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Drainage: Landlord shall furnish and install jurisdictionally approved rooftop drainage to tie in with site and/or municipal storm water management system.",
+   "page_hint": 18,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "084000",
+   "scope_summary": "Furnish and install all exterior doors, frames, windows, and/or storefront system as shown in criteria.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall furnish and install all exterior doors, frames, windows and/or storefront system as shown in the tenant criteria set, including and not limited to (1) primary entry door, (1) secondary entry door and (1) rear access door.",
+   "page_hint": 18,
+   "quantity_stated": "(1)",
+   "excluded": false
+  },
+  {
+   "csi_raw": "084000",
+   "scope_summary": "Furnish and install a commercial grade rear service door for egress.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Steel Doors: Landlord shall furnish and install [1] commercial grade 42\" x 84” rear service door for egress.",
+   "page_hint": 18,
+   "quantity_stated": "[1], 42\" x 84”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "085000",
+   "scope_summary": "Furnish and install a fully operational drive-thru window.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall furnish and install fully operational Ready AccessTM Drive Thru Window.",
+   "page_hint": 19,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "092000",
+   "scope_summary": "Provide exterior walls and interior Gypsum Wallboard demising walls.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall provide exterior walls and interior Gypsum Wallboard (GWB) demising walls.",
+   "page_hint": 20,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "092000",
+   "scope_summary": "Provide GWB on the interior face of exterior walls and demising walls up to specified height.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Gypsum Wallboard (GWB): Landlord shall provide GWB on interior face of exterior walls and demising walls to 10’-0” AFF.",
+   "page_hint": 20,
+   "quantity_stated": "10’-0”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "095000",
+   "scope_summary": "Deliver the space with the ceiling open to the structure.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall deliver Tenant’s space with ceiling open to structure.",
+   "page_hint": 21,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "107000",
+   "scope_summary": "Install a bike rack approved by the tenant.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Bike Rack: Landlord shall install Tenant approved bike rack(s).",
+   "page_hint": 22,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "107300",
+   "scope_summary": "Permit, furnish, and install an aluminum canopy structure at the patio.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall permit, furnish, and install aluminum Awnex Architectural Brand canopy at Tenant’s patio.",
+   "page_hint": 22,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "107300 A",
+   "scope_summary": "Permit, furnish, and install a specified fabric weather protective awning above the drive-thru window.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Drive Thru Fabric Awning: Landlord shall permit, furnish, and install Starbucks specified fabric weather protective awning above drive thru window.",
+   "page_hint": 23,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "210000",
+   "scope_summary": "Engineer, permit, furnish, and install a certified fire sprinkler system if required by code.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: If required by applicable codes; Landlord shall engineer, obtain permits, furnish and install a certified fire sprinkler system in dedicated riser room.",
+   "page_hint": 24,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "224200",
+   "scope_summary": "Properly flash roof penetrations and extend plumbing vent pipes to terminate in the ceiling above the tenant's space.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall properly flash roof penetration and extend pipe to terminate in the ceiling above tenant's space.",
+   "page_hint": 24,
+   "quantity_stated": "",
+   "excluded": false
+  }
+ ]
+}

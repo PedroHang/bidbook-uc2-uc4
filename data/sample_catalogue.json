@@ -1,0 +1,575 @@
+{
+ "_note": "FABRICATED SAMPLE catalogue for the Scope IQ demo. No prices, on purpose. Sections 10 44 00 and all of division 27 are deliberately absent so the catalogue-gap state occurs naturally.",
+ "items": [
+  {
+   "code": "015000-110",
+   "csi_section": "01 50 00",
+   "description": "Temporary facilities and controls, monthly",
+   "uom": "MO"
+  },
+  {
+   "code": "017419-120",
+   "csi_section": "01 74 19",
+   "description": "Construction waste disposal, 30 CY container",
+   "uom": "EA"
+  },
+  {
+   "code": "024119-110",
+   "csi_section": "02 41 19",
+   "description": "Selective demolition, interior non-structural",
+   "uom": "SF"
+  },
+  {
+   "code": "024119-140",
+   "csi_section": "02 41 19",
+   "description": "Sawcut and remove existing slab section",
+   "uom": "SF"
+  },
+  {
+   "code": "033000-110",
+   "csi_section": "03 30 00",
+   "description": "Cast-in-place concrete, 3000 PSI, formed",
+   "uom": "CY"
+  },
+  {
+   "code": "033100-140",
+   "csi_section": "03 31 00",
+   "description": "Cast-in-place footing, 3000 PSI",
+   "uom": "CY"
+  },
+  {
+   "code": "033053-220",
+   "csi_section": "03 30 53",
+   "description": "Slab infill at openings, 4 in, doweled to existing",
+   "uom": "SF"
+  },
+  {
+   "code": "031519-110",
+   "csi_section": "03 15 19",
+   "description": "Anchor bolt set, cast-in, per template",
+   "uom": "EA"
+  },
+  {
+   "code": "033519-100",
+   "csi_section": "03 35 19",
+   "description": "Slab grind and prep to receive finish flooring",
+   "uom": "SF"
+  },
+  {
+   "code": "033543-060",
+   "csi_section": "03 35 43",
+   "description": "Penetrating concrete sealer, water based",
+   "uom": "SF"
+  },
+  {
+   "code": "030130-210",
+   "csi_section": "03 01 30",
+   "description": "Crack and spall patching, epoxy mortar",
+   "uom": "LF"
+  },
+  {
+   "code": "055000-120",
+   "csi_section": "05 50 00",
+   "description": "Miscellaneous metal fabrications, galvanized",
+   "uom": "LB"
+  },
+  {
+   "code": "055100-140",
+   "csi_section": "05 51 00",
+   "description": "Steel stair, shop fabricated, per flight",
+   "uom": "EA"
+  },
+  {
+   "code": "064116-120",
+   "csi_section": "06 41 16",
+   "description": "Plastic-laminate base cabinet, 36 in",
+   "uom": "LF"
+  },
+  {
+   "code": "064116-160",
+   "csi_section": "06 41 16",
+   "description": "Plastic-laminate upper cabinet, 30 in",
+   "uom": "LF"
+  },
+  {
+   "code": "066116-140",
+   "csi_section": "06 61 16",
+   "description": "Solid surface countertop, 25 in deep",
+   "uom": "LF"
+  },
+  {
+   "code": "062213-080",
+   "csi_section": "06 22 13",
+   "description": "Wood trim and standing rail, painted grade",
+   "uom": "LF"
+  },
+  {
+   "code": "061000-100",
+   "csi_section": "06 10 00",
+   "description": "Rough carpentry and in-wall blocking",
+   "uom": "SF"
+  },
+  {
+   "code": "072116-130",
+   "csi_section": "07 21 16",
+   "description": "Batt insulation, R-13, 3-1/2 in, in stud wall",
+   "uom": "SF"
+  },
+  {
+   "code": "072116-210",
+   "csi_section": "07 21 16",
+   "description": "Acoustic batt at interior partitions",
+   "uom": "SF"
+  },
+  {
+   "code": "072600-040",
+   "csi_section": "07 26 00",
+   "description": "Vapor retarder, 6 mil polyethylene",
+   "uom": "SF"
+  },
+  {
+   "code": "078413-110",
+   "csi_section": "07 84 13",
+   "description": "Penetration firestopping, through-wall",
+   "uom": "EA"
+  },
+  {
+   "code": "079213-110",
+   "csi_section": "07 92 13",
+   "description": "Joint sealant, silicone, exterior grade",
+   "uom": "LF"
+  },
+  {
+   "code": "079213-060",
+   "csi_section": "07 92 13",
+   "description": "Joint sealant, acrylic latex, interior",
+   "uom": "LF"
+  },
+  {
+   "code": "079126-020",
+   "csi_section": "07 91 26",
+   "description": "Backer rod, closed cell",
+   "uom": "LF"
+  },
+  {
+   "code": "075323-130",
+   "csi_section": "07 53 23",
+   "description": "EPDM membrane patch at roof penetration",
+   "uom": "SF"
+  },
+  {
+   "code": "081113-140",
+   "csi_section": "08 11 13",
+   "description": "Hollow metal frame, 16 ga, welded, painted",
+   "uom": "EA"
+  },
+  {
+   "code": "081113-210",
+   "csi_section": "08 11 13",
+   "description": "Flush hollow metal door, 18 ga, 3'-0\" x 7'-0\"",
+   "uom": "EA"
+  },
+  {
+   "code": "081416-120",
+   "csi_section": "08 14 16",
+   "description": "Solid core wood door, plain sliced, prefinished",
+   "uom": "EA"
+  },
+  {
+   "code": "084313-100",
+   "csi_section": "08 43 13",
+   "description": "Aluminum storefront system, 1 in insulated glazing",
+   "uom": "SF"
+  },
+  {
+   "code": "084313-320",
+   "csi_section": "08 43 13",
+   "description": "Storefront entry door, narrow stile, 3'-0\"",
+   "uom": "EA"
+  },
+  {
+   "code": "087100-140",
+   "csi_section": "08 71 00",
+   "description": "Door hardware set, mortise lock, lever",
+   "uom": "EA"
+  },
+  {
+   "code": "087120-090",
+   "csi_section": "08 71 20",
+   "description": "Building-standard cylinder, keyed",
+   "uom": "EA"
+  },
+  {
+   "code": "088000-110",
+   "csi_section": "08 80 00",
+   "description": "Interior glazing, 1/4 in tempered",
+   "uom": "SF"
+  },
+  {
+   "code": "092116-330",
+   "csi_section": "09 21 16",
+   "description": "GWB partition, 3-5/8 in metal stud, one layer each side",
+   "uom": "SF"
+  },
+  {
+   "code": "092116-410",
+   "csi_section": "09 21 16",
+   "description": "Shaft wall assembly, 2-hour",
+   "uom": "SF"
+  },
+  {
+   "code": "092900-120",
+   "csi_section": "09 29 00",
+   "description": "Gypsum board finish, Level 4, tape and sand",
+   "uom": "SF"
+  },
+  {
+   "code": "092900-160",
+   "csi_section": "09 29 00",
+   "description": "Gypsum board finish, Level 5, skim coat",
+   "uom": "SF"
+  },
+  {
+   "code": "092216-110",
+   "csi_section": "09 22 16",
+   "description": "Non-structural metal framing, ceilings and soffits",
+   "uom": "SF"
+  },
+  {
+   "code": "095123-110",
+   "csi_section": "09 51 23",
+   "description": "Acoustical panel ceiling, 2x2 tile and grid",
+   "uom": "SF"
+  },
+  {
+   "code": "095123-260",
+   "csi_section": "09 51 23",
+   "description": "Ceiling perimeter trim, shadow molding",
+   "uom": "LF"
+  },
+  {
+   "code": "092226-130",
+   "csi_section": "09 22 26",
+   "description": "Suspension system, heavy duty, seismic",
+   "uom": "SF"
+  },
+  {
+   "code": "096513-100",
+   "csi_section": "09 65 13",
+   "description": "Resilient wall base, 4 in coved",
+   "uom": "LF"
+  },
+  {
+   "code": "096513-140",
+   "csi_section": "09 65 13",
+   "description": "Resilient wall base, 6 in straight",
+   "uom": "LF"
+  },
+  {
+   "code": "096513-900",
+   "csi_section": "09 65 13",
+   "description": "Base and flooring adhesive",
+   "uom": "GAL"
+  },
+  {
+   "code": "096519-120",
+   "csi_section": "09 65 19",
+   "description": "Luxury vinyl tile, glue down",
+   "uom": "SF"
+  },
+  {
+   "code": "093013-140",
+   "csi_section": "09 30 13",
+   "description": "Ceramic tile, floor, thinset",
+   "uom": "SF"
+  },
+  {
+   "code": "093013-240",
+   "csi_section": "09 30 13",
+   "description": "Ceramic tile, wall, thinset",
+   "uom": "SF"
+  },
+  {
+   "code": "099123-110",
+   "csi_section": "09 91 23",
+   "description": "Paint, interior wall, latex, 2 coats",
+   "uom": "SF"
+  },
+  {
+   "code": "099123-260",
+   "csi_section": "09 91 23",
+   "description": "Paint, hollow metal door and frame, alkyd",
+   "uom": "EA"
+  },
+  {
+   "code": "099123-310",
+   "csi_section": "09 91 23",
+   "description": "Paint, exposed structure and deck, dryfall",
+   "uom": "SF"
+  },
+  {
+   "code": "099113-040",
+   "csi_section": "09 91 13",
+   "description": "Primer, block filler, masonry",
+   "uom": "SF"
+  },
+  {
+   "code": "099600-120",
+   "csi_section": "09 96 00",
+   "description": "High-performance coating, epoxy, 2 coat",
+   "uom": "SF"
+  },
+  {
+   "code": "101400-110",
+   "csi_section": "10 14 00",
+   "description": "Interior signage, room identification, ADA",
+   "uom": "EA"
+  },
+  {
+   "code": "102113-120",
+   "csi_section": "10 21 13",
+   "description": "Toilet compartment, solid plastic, floor mounted",
+   "uom": "EA"
+  },
+  {
+   "code": "102800-130",
+   "csi_section": "10 28 00",
+   "description": "Toilet accessories, commercial set",
+   "uom": "EA"
+  },
+  {
+   "code": "123661-140",
+   "csi_section": "12 36 61",
+   "description": "Solid surface vanity top",
+   "uom": "LF"
+  },
+  {
+   "code": "124813-110",
+   "csi_section": "12 48 13",
+   "description": "Entrance floor mat and frame, recessed",
+   "uom": "SF"
+  },
+  {
+   "code": "211313-140",
+   "csi_section": "21 13 13",
+   "description": "Wet pipe sprinkler main, 4 in, schedule 10",
+   "uom": "LF"
+  },
+  {
+   "code": "211313-320",
+   "csi_section": "21 13 13",
+   "description": "Sprinkler drop and head, semi-recessed, chrome",
+   "uom": "EA"
+  },
+  {
+   "code": "211313-360",
+   "csi_section": "21 13 13",
+   "description": "Sprinkler head relocation",
+   "uom": "EA"
+  },
+  {
+   "code": "211200-110",
+   "csi_section": "21 12 00",
+   "description": "Fire department connection, exposed",
+   "uom": "EA"
+  },
+  {
+   "code": "221116-120",
+   "csi_section": "22 11 16",
+   "description": "Domestic water pipe, copper, 1 in, insulated",
+   "uom": "LF"
+  },
+  {
+   "code": "220523-060",
+   "csi_section": "22 05 23",
+   "description": "Gate valve, bronze, 1 in",
+   "uom": "EA"
+  },
+  {
+   "code": "220719-040",
+   "csi_section": "22 07 19",
+   "description": "Pipe insulation, fiberglass, 1 in",
+   "uom": "LF"
+  },
+  {
+   "code": "221316-130",
+   "csi_section": "22 13 16",
+   "description": "Sanitary waste pipe, PVC, 4 in, buried",
+   "uom": "LF"
+  },
+  {
+   "code": "224213-110",
+   "csi_section": "22 42 13",
+   "description": "Water closet, floor mounted, commercial",
+   "uom": "EA"
+  },
+  {
+   "code": "224216-120",
+   "csi_section": "22 42 16",
+   "description": "Lavatory, wall hung, with faucet",
+   "uom": "EA"
+  },
+  {
+   "code": "224713-110",
+   "csi_section": "22 47 13",
+   "description": "Electric water cooler, bi-level, ADA",
+   "uom": "EA"
+  },
+  {
+   "code": "223330-120",
+   "csi_section": "22 33 30",
+   "description": "Electric water heater, point of use, 20 gal",
+   "uom": "EA"
+  },
+  {
+   "code": "237413-150",
+   "csi_section": "23 74 13",
+   "description": "Packaged rooftop unit, 5 ton, gas/electric",
+   "uom": "EA"
+  },
+  {
+   "code": "237413-180",
+   "csi_section": "23 74 13",
+   "description": "Packaged rooftop unit, 10 ton, gas/electric",
+   "uom": "EA"
+  },
+  {
+   "code": "233113-220",
+   "csi_section": "23 31 13",
+   "description": "Ductwork, galvanized, medium pressure",
+   "uom": "LB"
+  },
+  {
+   "code": "233713-110",
+   "csi_section": "23 37 13",
+   "description": "Diffuser, supply, 2x2 lay-in",
+   "uom": "EA"
+  },
+  {
+   "code": "233713-140",
+   "csi_section": "23 37 13",
+   "description": "Grille, return, 2x2 lay-in",
+   "uom": "EA"
+  },
+  {
+   "code": "230593-010",
+   "csi_section": "23 05 93",
+   "description": "Testing, adjusting and balancing",
+   "uom": "LS"
+  },
+  {
+   "code": "230900-130",
+   "csi_section": "23 09 00",
+   "description": "DDC controls, per zone",
+   "uom": "EA"
+  },
+  {
+   "code": "232300-120",
+   "csi_section": "23 23 00",
+   "description": "Refrigerant piping, line set, per ton",
+   "uom": "EA"
+  },
+  {
+   "code": "262416-340",
+   "csi_section": "26 24 16",
+   "description": "Panelboard, 400 A, 277/480 V, 3 phase, 42 circuit",
+   "uom": "EA"
+  },
+  {
+   "code": "262416-220",
+   "csi_section": "26 24 16",
+   "description": "Panelboard, 225 A, 120/208 V, 3 phase",
+   "uom": "EA"
+  },
+  {
+   "code": "260519-420",
+   "csi_section": "26 05 19",
+   "description": "Feeder, conduit and wire, 400 A, aluminum",
+   "uom": "LF"
+  },
+  {
+   "code": "262213-110",
+   "csi_section": "26 22 13",
+   "description": "Dry-type transformer, 75 kVA",
+   "uom": "EA"
+  },
+  {
+   "code": "260533-120",
+   "csi_section": "26 05 33",
+   "description": "Branch conduit, EMT, 3/4 in, with wire",
+   "uom": "LF"
+  },
+  {
+   "code": "262726-110",
+   "csi_section": "26 27 26",
+   "description": "Duplex receptacle, spec grade, in wall",
+   "uom": "EA"
+  },
+  {
+   "code": "262726-140",
+   "csi_section": "26 27 26",
+   "description": "GFCI receptacle, 20 A",
+   "uom": "EA"
+  },
+  {
+   "code": "265113-210",
+   "csi_section": "26 51 13",
+   "description": "LED downlight, 6 in, dimmable",
+   "uom": "EA"
+  },
+  {
+   "code": "265113-380",
+   "csi_section": "26 51 13",
+   "description": "Track lighting, 4 ft section, 2 heads",
+   "uom": "LF"
+  },
+  {
+   "code": "265113-420",
+   "csi_section": "26 51 13",
+   "description": "LED linear pendant, 4 ft",
+   "uom": "EA"
+  },
+  {
+   "code": "260923-120",
+   "csi_section": "26 09 23",
+   "description": "Dimming control station, 0-10V",
+   "uom": "EA"
+  },
+  {
+   "code": "265213-110",
+   "csi_section": "26 52 13",
+   "description": "Exit sign, LED, battery backup",
+   "uom": "EA"
+  },
+  {
+   "code": "265619-130",
+   "csi_section": "26 56 19",
+   "description": "Exterior wall pack, LED, photocell",
+   "uom": "EA"
+  },
+  {
+   "code": "283100-120",
+   "csi_section": "28 31 00",
+   "description": "Smoke detector, addressable, ceiling",
+   "uom": "EA"
+  },
+  {
+   "code": "283100-160",
+   "csi_section": "28 31 00",
+   "description": "Horn/strobe, wall mounted, ADA",
+   "uom": "EA"
+  },
+  {
+   "code": "321313-120",
+   "csi_section": "32 13 13",
+   "description": "Concrete sidewalk, 4 in, broom finish",
+   "uom": "SF"
+  },
+  {
+   "code": "321723-110",
+   "csi_section": "32 17 23",
+   "description": "Pavement marking, parking stall",
+   "uom": "EA"
+  }
+ ]
+}

@@ -1,0 +1,166 @@
+{
+ "lines": [
+  {
+   "csi_raw": "014000",
+   "scope_summary": "Secure an exterior construction camera with a solar panel for site monitoring.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord will secure one (1) 12 Megapixel Cobalt Exterior OxBlue Construction Camera with Solar panel (optional).",
+   "page_hint": 5,
+   "quantity_stated": "one (1) 12 Megapixel",
+   "excluded": false
+  },
+  {
+   "csi_raw": "14100",
+   "scope_summary": "Obtain planning and zoning approval, land entitlements, and pay impact fees for site improvements.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall be responsible for planning and zoning approval, land entitlements, and all associated impact fees associated with Site improvements.",
+   "page_hint": 5,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "024000",
+   "scope_summary": "Selective demolition is not required or applicable.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "N/A",
+   "page_hint": 5,
+   "quantity_stated": "",
+   "excluded": true
+  },
+  {
+   "csi_raw": "033000",
+   "scope_summary": "Provide concrete footings and anchor bolts for approved signage.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall provide concrete footings with specified anchor bolts in accordance with tenant's approved signage.",
+   "page_hint": 5,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "033001",
+   "scope_summary": "Provide a concrete slab with leave-outs for tenant-provided fixtures.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall provide concrete slab with 18” dia. “leave outs” for tenant provided fixtures.",
+   "page_hint": 6,
+   "quantity_stated": "18”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "033001",
+   "scope_summary": "Install a vapor barrier under all interior slabs-on-grade.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Provide 15 mil under slab vapor barrier under all interior slabs-on-grade.",
+   "page_hint": 6,
+   "quantity_stated": "15 mil",
+   "excluded": false
+  },
+  {
+   "csi_raw": "101400",
+   "scope_summary": "Provide a monument or pylon sign built to the maximum allowable height.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord to provide [MONUMENT] or [PYLON] to the maximum allowable height [INSERT HEIGHT] per code or otherwise approved by Tenant.",
+   "page_hint": 7,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "105523",
+   "scope_summary": "Install mailbox according to local jurisdictional requirements.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Mailbox shall be installed by Landlord and placed per jurisdictional requirements.",
+   "page_hint": 7,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "221113",
+   "scope_summary": "Furnish and install an independent domestic water meter with bypass and shut-off valves.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Permit, furnish, install at rear of Tenant’s space isolated from electrical equipment a minimum: \n• One [1] 1½”(min.) independent domestic water meter, designated for Tenant's use, with shut-off valves on either side and bypass valving for maintenance.",
+   "page_hint": 7,
+   "quantity_stated": "One [1] 1½”",
+   "excluded": false
+  },
+  {
+   "csi_raw": "221319",
+   "scope_summary": "Install a hydro-mechanical interceptor below grade with plumbing fixture connections.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "The Landlord shall install a minimum sized GB75 Hydro-Mechanical interceptor below grade, with connections to plumbing fixtures/floor sinks as required by the authority having jurisdiction.",
+   "page_hint": 8,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "321200",
+   "scope_summary": "Provide vehicular paving for drive-thru lanes, parking areas, and drive aisles.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall be responsible for vehicular paving including drive thru lanes, parking, and drive aisles.",
+   "page_hint": 9,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "321200",
+   "scope_summary": "Provide sealed concrete paving at the trash enclosure location.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Provide 6\" thick sealed concrete paving at trash enclosure.",
+   "page_hint": 9,
+   "quantity_stated": "6\"",
+   "excluded": false
+  },
+  {
+   "csi_raw": "321300",
+   "scope_summary": "Provide cast in place sidewalks, curbs, curb cuts, retainage walls, ramps, and stairs.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Hardscape: Landlord shall provide cast in place sidewalks, curbs, curb cuts, landscape retainage, ramps, and/or stairs as needed to ensure onsite pedestrian and vehicular access.",
+   "page_hint": 10,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "321700",
+   "scope_summary": "Provide striping, accessible markings, and wayfinding graphics in the parking lot and drive thru.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Provide parking lot pavement markings including accessible markings, stall striping, site and drive thru wayfinding graphics per jurisdictional requirements, and as defined in Starbucks tenant criteria package.",
+   "page_hint": 11,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "321700",
+   "scope_summary": "Wheel stops are not applicable for this project's parking layout.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Wheel Stops: N/A",
+   "page_hint": 11,
+   "quantity_stated": "",
+   "excluded": true
+  },
+  {
+   "csi_raw": "322000",
+   "scope_summary": "Provide a trash enclosure sized for specified refuse and recycling containers.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Required Dimensions: Provide a trash enclosure minimal interior clear 15'-4\" wide x 11’'-8\" deep x 10’-0\" high, with space inside to accommodate (2) four (4) cubic yard trash containers, and two [2] sixty-four (64) gallon containers.",
+   "page_hint": 11,
+   "quantity_stated": "(2) four (4), two [2] sixty-four (64)",
+   "excluded": false
+  },
+  {
+   "csi_raw": "328000",
+   "scope_summary": "Furnish and install a compliant irrigation system.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Installation: Landlord shall furnish and install irrigation system in compliance with tenant provided irrigation standards and local regulations.",
+   "page_hint": 12,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "329300",
+   "scope_summary": "Furnish and install landscaping per tenant standards and local regulations.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Planting Design: Landlord shall furnish and install landscape in compliance with tenant provided landscape standards and local regulations.",
+   "page_hint": 12,
+   "quantity_stated": "",
+   "excluded": false
+  }
+ ]
+}

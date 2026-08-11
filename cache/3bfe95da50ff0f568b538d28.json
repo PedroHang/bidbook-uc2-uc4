@@ -1,0 +1,220 @@
+{
+ "lines": [
+  {
+   "csi_raw": "",
+   "scope_summary": "Leave piping exposed for future connection and provide a shut-off valve if the system is pressurized.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Leave piping exposed and visible for \nTenant's future connection. If system is pressurized provide \n¼ turn shut off valve.",
+   "page_hint": 25,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "132116",
+   "scope_summary": "Supply approved specification for the walk-in cooler.",
+   "responsibility": "Tenant",
+   "verbatim_quote": "General: Tenant will supply landlord with approved \nspecification for walk-in cooler (reference tenant criteria \npackage).",
+   "page_hint": 25,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "132116",
+   "scope_summary": "Obtain planning/building approval and pay impact fees for the cooler, pad, and footings.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Permitting: Landlord shall be responsible for planning / \nbuilding approval, and all impact fees associated with \ntenant’s cooler, concrete pad and perimeter footings.",
+   "page_hint": 25,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "132116",
+   "scope_summary": "Provide engineered concrete pad and perimeter footings for the cooler.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Concrete work: Landlord shall provide engineered \nconcrete pad with perimeter footings to support Starbucks \nCooler.",
+   "page_hint": 25,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "132116",
+   "scope_summary": "Provide an exterior access door for the cooler.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord shall provide \nexterior door for access to tenants' cooler.",
+   "page_hint": 25,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "233000",
+   "scope_summary": "Furnish and install drop plenum for RTUs.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "General: Landlord shall furnish and install RTU’s drop \nplenum when units are set.",
+   "page_hint": 26,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "233000",
+   "scope_summary": "Furnish and install the remaining HVAC ductwork in the space.",
+   "responsibility": "Tenant",
+   "verbatim_quote": "Tenant will furnish and install the remaining HVAC duct \nwork throughout space.",
+   "page_hint": 26,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "233400",
+   "scope_summary": "Furnish and install rooftop exhaust fans and associated components.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Fan: Furnish and install two (2) rooftop exhaust fans, \nassociated curb, roofing, flashing, and electrical connection \nto ensure fully operational system.",
+   "page_hint": 26,
+   "quantity_stated": "two (2)",
+   "excluded": false
+  },
+  {
+   "csi_raw": "237000",
+   "scope_summary": "Utilize the specified purchasing program for RTU procurement.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Landlord \nshall utilize Starbucks National HVAC Purchasing Program \nfor unit procurement, per Tenant's Design Criteria.",
+   "page_hint": 26,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "237000",
+   "scope_summary": "Provide thermostat cable for future use.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Thermostats: Landlord shall provide a minimum length of \n150'-0\" of low voltage thermostat cable for Tenant's future \nuse.",
+   "page_hint": 27,
+   "quantity_stated": "150'-0\"",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260923",
+   "scope_summary": "Furnish and install underground electrical feeders to the main panel.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Feeders: Landlord Shall furnish and install; concealed \nbelow grade, electrical feeders from utility service point to \nTenant’s main panel on Premises.",
+   "page_hint": 28,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260923",
+   "scope_summary": "Furnish and install two electrical panels.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Electrical Panels: Landlord shall furnish and install two \nelectrical panels (Square D or equal) with a minimum of 66 \ncircuit spaces each, include breakers per Tenant's \nconstruction drawings.",
+   "page_hint": 28,
+   "quantity_stated": "two",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260923",
+   "scope_summary": "Provide a step-down transformer if site conditions require it.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Transformer: Landlord shall provide a step-down \ntransformer when site conditions dictate an alternate \nservice.",
+   "page_hint": 29,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260923",
+   "scope_summary": "Provide temporary service if permanent power is unavailable on delivery.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Temporary Power: If permanent electrical service is not \navailable on the delivery date as defined in the lease, \ntemporary service shall be provided by the Landlord.",
+   "page_hint": 29,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260929",
+   "scope_summary": "Install conduit for monument or pylon signs.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "One [1] 1\" conduit for each dedicated monument and/or \npylon sign to electrical panel in BOH (Back of House).",
+   "page_hint": 30,
+   "quantity_stated": "One [1]",
+   "excluded": false
+  },
+  {
+   "csi_raw": "260929",
+   "scope_summary": "Install data conduits from the digital order screen to the drive thru bump.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Two [2] 1\" data conduits from Digital Order Screen to the \ninterior of the drive thru \"bump\" (Reference tenant criteria \nPackage for termination points).",
+   "page_hint": 30,
+   "quantity_stated": "Two [2]",
+   "excluded": false
+  },
+  {
+   "csi_raw": "265600",
+   "scope_summary": "Provide exterior lighting infrastructure to ensure code-compliant site illumination.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Infrastructure: Landlord shall provide exterior lighting, \nconduit, wiring, footings, poles, and fixtures necessary to \nensure site illumination meets minimum lighting levels as \nrequired by code.",
+   "page_hint": 31,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "273300",
+   "scope_summary": "Order telecommunication services for the leased space.",
+   "responsibility": "Tenant",
+   "verbatim_quote": "Landlord Initiated Connectivity: Telecommunication \nservices will be ordered by Starbucks for the space leased \nhowever to provide Starbucks with point of feed exhibits \nand Landlord to coordinate initial installation of \ncommunication infrastructure with local telco or broadband \nprovider, including the termination of ONT (Optical Network \nTermination) fiber and/or broadband node at the minimum \npoint of entry.",
+   "page_hint": 32,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "273300",
+   "scope_summary": "Provide conduit for service entrance.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Service Entry: Landlord shall provide minimum 4\" conduit \nfor service entrance, or size per requirements of local \nservice provider.",
+   "page_hint": 32,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "273300",
+   "scope_summary": "Provide separate conduit paths between detached spaces if applicable.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Remote Spaces: If Tenant's café space is located in \nmultiple spaces, (e.g. kiosk with remote office and/or café \nwith remote storage), Landlord will provide (2) separate 2” \nconduit paths to allow voice and internet connectivity \nbetween detached spaces.",
+   "page_hint": 33,
+   "quantity_stated": "(2)",
+   "excluded": false
+  },
+  {
+   "csi_raw": "284600",
+   "scope_summary": "Fire Alarm systems",
+   "responsibility": "Unclear",
+   "verbatim_quote": "N/A",
+   "page_hint": 33,
+   "quantity_stated": "",
+   "excluded": true
+  },
+  {
+   "csi_raw": "284600",
+   "scope_summary": "Install all operable components, boxes, and conduits for the alarm system.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Installation: Landlord shall be responsible for installation of all \nconduits, boxes, and operable components of alarm system.",
+   "page_hint": 33,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "481000",
+   "scope_summary": "Obtain permits for solar panels and solar canopies.",
+   "responsibility": "Landlord",
+   "verbatim_quote": "Regulatory: Landlord shall be responsible all \npermits required for solar panels and solar canopies.",
+   "page_hint": 34,
+   "quantity_stated": "",
+   "excluded": false
+  },
+  {
+   "csi_raw": "481000",
+   "scope_summary": "Provide conduit feeds to the roof for solar connectivity.",
+   "responsibility": "Unclear",
+   "verbatim_quote": "Provide (2) 1” Sch 40 conduit feeds per \nTenant’s Construction Drawings to roof.",
+   "page_hint": 35,
+   "quantity_stated": "(2)",
+   "excluded": false
+  }
+ ]
+}

@@ -1,0 +1,558 @@
+{
+ "rankings": [
+  {
+   "line_id": "L001",
+   "ordered_codes": [
+    "015000-110",
+    "017419-120"
+   ],
+   "why": [
+    "Temporary facilities cover general site requirements like a construction camera.",
+    "Waste disposal is unrelated to a construction camera or site monitoring."
+   ]
+  },
+  {
+   "line_id": "L002",
+   "ordered_codes": [
+    "015000-110",
+    "017419-120"
+   ],
+   "why": [
+    "Temporary facilities and general conditions can represent administrative site overheads.",
+    "Waste disposal does not align with planning and zoning fees."
+   ]
+  },
+  {
+   "line_id": "L005",
+   "ordered_codes": [
+    "033000-110",
+    "033053-220"
+   ],
+   "why": [
+    "Matches the requirement for a cast-in-place concrete slab.",
+    "Relates to the slab leave-outs and infill for tenant fixtures."
+   ]
+  },
+  {
+   "line_id": "L006",
+   "ordered_codes": [
+    "033000-110",
+    "033053-220"
+   ],
+   "why": [
+    "The vapor barrier goes under the cast-in-place concrete slab-on-grade.",
+    "Slab infill is less relevant to the under-slab vapor barrier than the main slab."
+   ]
+  },
+  {
+   "line_id": "L008",
+   "ordered_codes": [
+    "102800-130",
+    "101400-110",
+    "102113-120"
+   ],
+   "why": [
+    "Commercial accessories is the closest fit for a specialty item like a mailbox.",
+    "Signage is a specialty but less functionally related to a mailbox.",
+    "Toilet compartments are unrelated to mailboxes."
+   ]
+  },
+  {
+   "line_id": "L011",
+   "ordered_codes": [
+    "321313-120",
+    "321723-110"
+   ],
+   "why": [
+    "Concrete paving matches the vehicular paving requirement.",
+    "Pavement marking applies directly to the parking areas mentioned."
+   ]
+  },
+  {
+   "line_id": "L012",
+   "ordered_codes": [
+    "321313-120",
+    "321723-110"
+   ],
+   "why": [
+    "Directly matches the concrete paving requirement for the trash enclosure.",
+    "Pavement marking is unrelated to concrete paving at the trash enclosure."
+   ]
+  },
+  {
+   "line_id": "L016",
+   "ordered_codes": [
+    "321313-120",
+    "321723-110"
+   ],
+   "why": [
+    "Concrete sidewalk can serve as the paving pad for the trash enclosure.",
+    "Pavement marking is unrelated to building a trash enclosure."
+   ]
+  },
+  {
+   "line_id": "L017",
+   "ordered_codes": [
+    "321313-120",
+    "321723-110"
+   ],
+   "why": [
+    "Concrete work is occasionally related to site irrigation patching, but generally poor fit.",
+    "Pavement marking is entirely unrelated to irrigation systems."
+   ]
+  },
+  {
+   "line_id": "L018",
+   "ordered_codes": [
+    "321313-120",
+    "321723-110"
+   ],
+   "why": [
+    "Concrete sidewalks are site improvements adjacent to landscaping.",
+    "Pavement markings are not landscaping."
+   ]
+  },
+  {
+   "line_id": "L026",
+   "ordered_codes": [
+    "033000-110",
+    "033100-140",
+    "033053-220",
+    "031519-110",
+    "030130-210",
+    "033519-100",
+    "033543-060"
+   ],
+   "why": [
+    "Cast-in-place concrete matches structures needed for stormwater retention.",
+    "Concrete footings can be part of underground retention structures.",
+    "Slab infill might relate to concrete work for the system.",
+    "Anchor bolts might be used in concrete retention structures.",
+    "Crack patching applies to concrete water structures.",
+    "Slab grinding is not typically for stormwater.",
+    "Concrete sealer is generally for architectural slabs."
+   ]
+  },
+  {
+   "line_id": "L029",
+   "ordered_codes": [
+    "075323-130",
+    "079213-110",
+    "072600-040",
+    "079126-020",
+    "078413-110",
+    "072116-130",
+    "072116-210",
+    "079213-060"
+   ],
+   "why": [
+    "Directly matches the EPDM roofing membrane requirement.",
+    "Exterior sealant is used in roofing systems.",
+    "Vapor retarder is often used in roof assemblies.",
+    "Backer rod is used with roofing sealants.",
+    "Firestopping applies to roof penetrations.",
+    "Wall batt insulation is not roofing.",
+    "Interior batt is not roofing.",
+    "Interior sealant is not exterior roofing."
+   ]
+  },
+  {
+   "line_id": "L030",
+   "ordered_codes": [
+    "072116-130",
+    "072116-210",
+    "072600-040",
+    "075323-130",
+    "079213-110",
+    "079126-020",
+    "078413-110",
+    "079213-060"
+   ],
+   "why": [
+    "Matches the insulation requirement, though specified for stud walls.",
+    "Acoustic batt is a form of insulation.",
+    "Vapor retarder pairs with insulation for energy conservation.",
+    "EPDM roof membrane sits above roof insulation.",
+    "Sealant relates to general energy envelope.",
+    "Backer rod for envelope sealing.",
+    "Firestopping is unrelated to R-value.",
+    "Interior sealant is unrelated to roof R-value."
+   ]
+  },
+  {
+   "line_id": "L031",
+   "ordered_codes": [
+    "075323-130",
+    "078413-110",
+    "079213-110",
+    "079126-020",
+    "072600-040",
+    "072116-130",
+    "072116-210",
+    "079213-060"
+   ],
+   "why": [
+    "Directly matches the rooftop penetration and flashing scope.",
+    "Firestopping applies to penetrations.",
+    "Exterior sealant is used for flashing curbs and penetrations.",
+    "Backer rod is used for penetration sealants.",
+    "Vapor retarder ties into penetrations.",
+    "Wall insulation is unrelated to roof penetrations.",
+    "Interior insulation is unrelated.",
+    "Interior sealant is unrelated to roof penetrations."
+   ]
+  },
+  {
+   "line_id": "L032",
+   "ordered_codes": [
+    "075323-130",
+    "079213-110",
+    "078413-110",
+    "079126-020",
+    "072600-040",
+    "072116-130",
+    "072116-210",
+    "079213-060"
+   ],
+   "why": [
+    "Roof drains penetrate the EPDM membrane.",
+    "Sealant is used around roof drains.",
+    "Firestopping might apply to drain penetrations.",
+    "Backer rod for sealant at drains.",
+    "Vapor retarder ties into roof drains.",
+    "Wall batt is unrelated.",
+    "Interior batt is unrelated.",
+    "Interior sealant is unrelated."
+   ]
+  },
+  {
+   "line_id": "L033",
+   "ordered_codes": [
+    "084313-100",
+    "084313-320",
+    "081113-140",
+    "081113-210",
+    "088000-110",
+    "087100-140",
+    "087120-090",
+    "081416-120"
+   ],
+   "why": [
+    "Directly matches the aluminum storefront system.",
+    "Matches the storefront entry door.",
+    "Matches the exterior door frames.",
+    "Matches the exterior flush metal doors.",
+    "Glazing relates to storefront windows.",
+    "Door hardware applies to all doors.",
+    "Cylinders apply to exterior doors.",
+    "Wood doors are typically interior, less likely exterior here."
+   ]
+  },
+  {
+   "line_id": "L034",
+   "ordered_codes": [
+    "081113-210",
+    "081113-140",
+    "087100-140",
+    "087120-090",
+    "084313-320",
+    "084313-100",
+    "081416-120",
+    "088000-110"
+   ],
+   "why": [
+    "Directly matches a steel service door.",
+    "Matches the hollow metal frame for the service door.",
+    "Hardware is required for the egress door.",
+    "Cylinders are required for the service door.",
+    "Storefront doors are not typically rear service doors.",
+    "Storefront systems do not match a rear steel door.",
+    "Wood doors do not match a steel door.",
+    "Glazing is unrelated to a solid steel door."
+   ]
+  },
+  {
+   "line_id": "L035",
+   "ordered_codes": [
+    "084313-100",
+    "088000-110",
+    "084313-320",
+    "081113-140",
+    "081113-210",
+    "087100-140",
+    "087120-090",
+    "081416-120"
+   ],
+   "why": [
+    "Aluminum storefronts are often used around drive-thru windows.",
+    "Glazing is a component of the drive-thru window.",
+    "Storefront doors are related but not a window.",
+    "Metal frames might be used to frame the window.",
+    "Metal doors are unrelated to the window.",
+    "Hardware is typically for doors, not this window.",
+    "Cylinders might lock the window.",
+    "Wood doors are unrelated to a drive-thru window."
+   ]
+  },
+  {
+   "line_id": "L036",
+   "ordered_codes": [
+    "092116-330",
+    "092900-120",
+    "092900-160",
+    "092116-410",
+    "092216-110",
+    "095123-110",
+    "095123-260",
+    "092226-130"
+   ],
+   "why": [
+    "Directly matches the Gypsum Wallboard (GWB) partition requirement.",
+    "GWB finish is needed for the installed demising walls.",
+    "Level 5 finish might be required for the GWB walls.",
+    "Shaft wall is a type of GWB wall assembly.",
+    "Metal framing supports the GWB.",
+    "Acoustical ceiling is unrelated to walls.",
+    "Ceiling trim is unrelated.",
+    "Ceiling suspension is unrelated."
+   ]
+  },
+  {
+   "line_id": "L037",
+   "ordered_codes": [
+    "092116-330",
+    "092900-120",
+    "092900-160",
+    "092116-410",
+    "092216-110",
+    "095123-110",
+    "095123-260",
+    "092226-130"
+   ],
+   "why": [
+    "Matches providing GWB on interior faces and demising walls.",
+    "GWB finish applies directly to the installed drywall.",
+    "Level 5 finish for GWB.",
+    "Shaft walls use GWB.",
+    "Metal framing is needed for GWB furring.",
+    "Ceiling panels are unrelated to wall GWB.",
+    "Ceiling trim is unrelated.",
+    "Suspension systems are unrelated."
+   ]
+  },
+  {
+   "line_id": "L038",
+   "ordered_codes": [
+    "095123-110",
+    "092216-110",
+    "092226-130",
+    "095123-260",
+    "092116-330",
+    "092116-410",
+    "092900-120",
+    "092900-160"
+   ],
+   "why": [
+    "Scope mentions ceiling; candidate represents acoustical ceiling that won't be installed.",
+    "Ceiling framing relates to ceiling components.",
+    "Ceiling suspension is related to the open ceiling condition.",
+    "Ceiling trim relates to ceiling components.",
+    "GWB partitions do not match ceiling structure.",
+    "Shaft walls are not ceilings.",
+    "GWB finish is not ceiling.",
+    "GWB skim coat is not ceiling."
+   ]
+  },
+  {
+   "line_id": "L039",
+   "ordered_codes": [
+    "102800-130",
+    "101400-110",
+    "102113-120"
+   ],
+   "why": [
+    "Bike racks fall under division 10 specialties, similar to commercial accessories.",
+    "Signage is unrelated to bike racks.",
+    "Toilet compartments are unrelated to bike racks."
+   ]
+  },
+  {
+   "line_id": "L040",
+   "ordered_codes": [
+    "102800-130",
+    "101400-110",
+    "102113-120"
+   ],
+   "why": [
+    "Canopies are division 10 specialties, closest to commercial accessories.",
+    "Signage is unrelated to canopies.",
+    "Toilet compartments are unrelated."
+   ]
+  },
+  {
+   "line_id": "L041",
+   "ordered_codes": [
+    "102800-130",
+    "101400-110",
+    "102113-120"
+   ],
+   "why": [
+    "Awnings are division 10 specialties, best matched by accessories.",
+    "Signage is unrelated to fabric awnings.",
+    "Toilet compartments are unrelated."
+   ]
+  },
+  {
+   "line_id": "L042",
+   "ordered_codes": [
+    "211313-140",
+    "211313-320",
+    "211313-360",
+    "211200-110"
+   ],
+   "why": [
+    "Directly matches the wet pipe sprinkler main requirement.",
+    "Sprinkler heads are components of the fire sprinkler system.",
+    "Sprinkler head relocation is part of sprinkler work.",
+    "Fire department connection is part of a complete sprinkler system."
+   ]
+  },
+  {
+   "line_id": "L043",
+   "ordered_codes": [
+    "224213-110",
+    "224216-120"
+   ],
+   "why": [
+    "Water closets require plumbing vent pipes.",
+    "Lavatories require plumbing vent pipes."
+   ]
+  },
+  {
+   "line_id": "L049",
+   "ordered_codes": [
+    "233113-220",
+    "237413-150",
+    "237413-180",
+    "233713-110",
+    "233713-140",
+    "230593-010",
+    "230900-130",
+    "232300-120"
+   ],
+   "why": [
+    "Ductwork matches the drop plenum for the RTUs.",
+    "The plenum connects to the packaged rooftop unit.",
+    "The plenum connects to the larger packaged rooftop unit.",
+    "Supply diffusers connect to the plenum ductwork.",
+    "Return grilles connect to the plenum.",
+    "Testing applies to the RTU and plenum airflow.",
+    "Controls apply to the RTU system.",
+    "Refrigerant piping is unrelated to a drop plenum."
+   ]
+  },
+  {
+   "line_id": "L050",
+   "ordered_codes": [
+    "233113-220",
+    "233713-110",
+    "233713-140",
+    "230593-010",
+    "237413-150",
+    "237413-180",
+    "230900-130",
+    "232300-120"
+   ],
+   "why": [
+    "Directly matches the HVAC ductwork requirement.",
+    "Supply diffusers are part of the ductwork distribution.",
+    "Return grilles are part of the ductwork system.",
+    "Balancing applies to the installed ductwork.",
+    "RTUs feed the ductwork.",
+    "Larger RTUs feed the ductwork.",
+    "Controls govern the duct system.",
+    "Refrigerant is unrelated to ductwork."
+   ]
+  },
+  {
+   "line_id": "L051",
+   "ordered_codes": [
+    "233113-220",
+    "233713-140",
+    "230593-010",
+    "230900-130",
+    "237413-150",
+    "237413-180",
+    "233713-110",
+    "232300-120"
+   ],
+   "why": [
+    "Exhaust fans connect to ductwork.",
+    "Return/exhaust grilles are used with exhaust fans.",
+    "Balancing applies to exhaust airflows.",
+    "Controls run the exhaust fans.",
+    "RTUs are HVAC equipment on the roof, like the exhaust fans.",
+    "RTUs are roof equipment.",
+    "Supply diffusers do not typically connect to exhaust fans.",
+    "Refrigerant is not for exhaust fans."
+   ]
+  },
+  {
+   "line_id": "L052",
+   "ordered_codes": [
+    "237413-150",
+    "237413-180",
+    "230593-010",
+    "230900-130",
+    "233113-220",
+    "233713-110",
+    "233713-140",
+    "232300-120"
+   ],
+   "why": [
+    "Directly matches procurement of a packaged RTU.",
+    "Matches procurement of a 10-ton packaged RTU.",
+    "Balancing is required after RTU procurement and install.",
+    "Controls apply to the procured RTU.",
+    "Ductwork connects to the RTU.",
+    "Diffusers distribute RTU air.",
+    "Grilles return RTU air.",
+    "Refrigerant is factory sealed in packaged RTUs."
+   ]
+  },
+  {
+   "line_id": "L053",
+   "ordered_codes": [
+    "230900-130",
+    "237413-150",
+    "237413-180",
+    "230593-010",
+    "233113-220",
+    "233713-110",
+    "233713-140",
+    "232300-120"
+   ],
+   "why": [
+    "Controls directly relate to low voltage thermostat cable.",
+    "Thermostats control the RTU.",
+    "Thermostats control the larger RTU.",
+    "Balancing tests the controlled zones.",
+    "Ductwork delivers the air.",
+    "Diffusers are unrelated to thermostat cable.",
+    "Grilles are unrelated to cables.",
+    "Refrigerant piping is not thermostat cable."
+   ]
+  },
+  {
+   "line_id": "L065",
+   "ordered_codes": [
+    "283100-120",
+    "283100-160"
+   ],
+   "why": [
+    "Smoke detectors are operable components of an alarm system.",
+    "Horn/strobes are operable components of an alarm system."
+   ]
+  }
+ ]
+}
