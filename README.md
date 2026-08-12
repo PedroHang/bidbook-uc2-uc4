@@ -1,4 +1,4 @@
-# Scope IQ — BidBook UC#2 / UC#4 demo
+# BidBookSoft — UC#2 / UC#4 bid intelligence demo
 
 One FastAPI + vanilla-JS app, two tabs:
 
@@ -193,6 +193,19 @@ text, so highlights are the only thing that can arrive one call later.
   real. Use it once before a call so you can honestly say the run is live.
 - **CACHED / LIVE RUN chip** in the bar states the current run's provenance.
 
+### Branding
+
+The header carries **BidBookSoft's own published logo** (`public/logo.png`, their
+horizontal lockup, downloaded from bidbooksoft.com) beside a **DEMO** tag, so the
+page reads as native to their product without ever claiming to be an official
+BidBook release. Both the logo and the tag carry the tooltip "Prototype built for
+BidBookSoft — not an official BidBook product".
+
+To swap in a different variant (for example the stacked BidBook / SOFT lockup),
+drop it over `public/logo.png`. The header sizes by height and lets width follow,
+so any aspect ratio re-fits itself; if a much taller variant crowds the 56px bar,
+lower `.wordmark { height }` in `styles.css`.
+
 ### Demo tips
 
 - Rehearse once with an upload in place, not only the clean seed.
@@ -257,6 +270,8 @@ pipeline/run.py         orchestrator: doc-type gate -> UC#4 scoring -> bid gate 
 pipeline/evaluate.py    UC#4 engine: rule partition by source, deterministic aggregation
 pipeline/scorecard.py   scorecard store: seed + runtime versioning + server-side diff audit
 public/                 vanilla JS front end (no framework, no build, no CDN)
+public/logo.png         BidBookSoft's published horizontal lockup (278x60), header brand
+public/favicon.png      BidBookSoft's published favicon, browser tab icon
 data/seed/              the real sample document (.docx + its converted .pdf)
 data/sample_catalogue.json  fabricated SAMPLE price book (no prices), see gen_catalogue.py
 data/scorecard_seed.json    the customer's real scorecard rows (seed; runtime edits go to data/runtime/)

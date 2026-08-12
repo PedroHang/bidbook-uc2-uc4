@@ -1,4 +1,4 @@
-/* Scope IQ — BidBook-palette design system (derived from bidbooksoft.com).
+/* BidBookSoft demo — palette derived from bidbooksoft.com, logo is their published asset.
    Tokens: brand #186CAC, brand-deep #0F4C7C, tint #EFF6FF, accent #FE9900,
    ok #2F7D4F, warn #B8791C, stop #A93B32, excluded #8B6FC0. */
 
@@ -29,8 +29,10 @@ input,select{font:inherit}
 /* header */
 .hdr{flex:none;height:56px;display:flex;align-items:center;gap:24px;padding:0 24px;
   background:var(--surface);border-bottom:1px solid var(--border)}
-.hdr-brand{display:flex;align-items:baseline;gap:8px;width:300px}
-.wordmark{font-size:17px;font-weight:700;letter-spacing:-.2px;color:var(--brand)}
+.hdr-brand{display:flex;align-items:center;gap:9px;width:300px}
+/* the official horizontal lockup, 278x60; height drives it, width follows.
+   Swap public/logo.png for another variant and the header re-fits itself. */
+.wordmark{height:30px;width:auto;display:block;flex:none}
 .demo-tag{font-size:9px;font-weight:700;letter-spacing:.9px;color:var(--dim);
   border:1px solid var(--border);border-radius:3px;padding:2px 5px}
 .hdr-tabs{display:flex;gap:4px;align-self:stretch}

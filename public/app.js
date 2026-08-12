@@ -1,4 +1,4 @@
-/* Scope IQ — vanilla JS front end. No framework, no build step, no CDN.
+/* BidBookSoft bid-intelligence demo — vanilla JS front end. No framework, no build step, no CDN.
    All dashboard and scorecard figures are computed here, in code, from data
    the server returns. The model never totals anything.
 
