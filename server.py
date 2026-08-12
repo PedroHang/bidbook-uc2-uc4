@@ -31,7 +31,7 @@ from fastapi.responses import JSONResponse, Response
 
 import contract
 import gemini
-from pipeline import convert, evaluate, run, scorecard
+from pipeline import convert, evaluate, run, scorecard, verify
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE / "data"
@@ -240,8 +240,8 @@ def rects(payload: dict = Body(...)) -> JSONResponse:
     if not pdf:
         return _err("document not held by this instance", 404, kind="rehydrate")
     try:
-        r = evaluate.verify.quote_rects(pdf, int(payload.get("page") or 1),
-                                        payload.get("quote") or "")
+        r = verify.quote_rects(pdf, int(payload.get("page") or 1),
+                               payload.get("quote") or "")
     except Exception as exc:  # noqa: BLE001
         return _err(f"{type(exc).__name__}: {exc}", 500)
     return JSONResponse({"ok": True, "rects": r})

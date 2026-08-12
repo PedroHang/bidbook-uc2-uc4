@@ -33,8 +33,9 @@ HERE = Path(__file__).resolve().parent
 # Read the committed cache; write wherever this deploy can write. On Vercel the
 # bundle is read-only and only the temp dir accepts writes, so a live call there
 # still succeeds and still caches, just for the life of that instance.
-CACHE_READ_DIRS = [HERE / "cache"]
-CACHE_DIR = HERE / "cache"
+# lives under data/ so one includeFiles glob covers every runtime asset
+CACHE_READ_DIRS = [HERE / "data" / "cache"]
+CACHE_DIR = HERE / "data" / "cache"
 try:
     CACHE_DIR.mkdir(exist_ok=True)
     probe = CACHE_DIR / ".writable"
@@ -47,7 +48,7 @@ except OSError:
 
 
 def cache_writable_in_repo() -> bool:
-    return CACHE_DIR == HERE / "cache"
+    return CACHE_DIR == HERE / "data" / "cache"
 
 # .env in the repo root, same convention as the sibling demos.
 # A key already exported in the shell always wins over the file.

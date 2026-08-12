@@ -118,7 +118,13 @@ vercel --prod
 ```
 
 Nothing else to configure. `vercel.json` sends `/api/*` to the Python function
-in `api/index.py` and lets Vercel's CDN serve `public/` directly.
+in `api/index.py` and lets Vercel's CDN serve `public/` directly. The whole
+deployment is about 1.3 MB.
+
+**The one environment variable:** add `GEMINI_API_KEY` in
+Project → Settings → Environment Variables (all three environments), then
+redeploy so the function picks it up. That is the only setting; there is
+nothing else to configure, and the app is fully usable before you add it.
 
 **The deployed app works with no API key at all.** `data/precomputed/seed.json`
 holds a real, committed run of the sample document, so first paint is instant
@@ -256,7 +262,7 @@ data/sample_catalogue.json  fabricated SAMPLE price book (no prices), see gen_ca
 data/scorecard_seed.json    the customer's real scorecard rows (seed; runtime edits go to data/runtime/)
 data/sample_crm.json        fabricated SAMPLE mini-CRM + derived-formula inputs
 data/sample_portfolio.json  fabricated SAMPLE 14-bid portfolio for the what-if panel
-cache/                  committed model-response cache for the seed run
+data/cache/             committed model-response cache (under data/ so one glob ships it)
 data/precomputed/seed.json  a real committed run of the sample; what /api/seed serves
 tools/precompute_seed.py    regenerates it
 selftest.py             acceptance checks
