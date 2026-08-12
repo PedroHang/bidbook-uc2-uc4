@@ -87,12 +87,12 @@ accepted as an alias. The model used is `gemini-3.1-pro-preview`
 
 **Linux / macOS**
 ```bash
-.venv/bin/uvicorn app:app --host 127.0.0.1 --port 8023
+.venv/bin/uvicorn local_server:app --host 127.0.0.1 --port 8023
 ```
 
 **Windows (PowerShell)**
 ```powershell
-.venv\Scripts\uvicorn app:app --host 127.0.0.1 --port 8023
+.venv\Scripts\uvicorn local_server:app --host 127.0.0.1 --port 8023
 ```
 
 Open **<http://localhost:8023>**. On first paint the seed document
@@ -120,6 +120,12 @@ vercel --prod
 Nothing else to configure. `vercel.json` sends `/api/*` to the Python function
 in `api/index.py` and lets Vercel's CDN serve `public/` directly. The whole
 deployment is about 1.3 MB.
+
+**Why there is no `app.py`:** Vercel's Python framework detection treats a
+root-level `app.py` as *the* deployment entrypoint and builds it instead of
+`api/index.py`. The local runner is therefore `local_server.py`, and the whole
+app (API routes plus the static mount) is assembled in `server.py`, so every
+entrypoint a host might choose serves the same working application.
 
 **The one environment variable:** add `GEMINI_API_KEY` in
 Project → Settings → Environment Variables (all three environments), then
@@ -232,6 +238,7 @@ lower `.wordmark { height }` in `styles.css`.
 | Port 8023 busy | `--port 8024` (any free port works; nothing else pins 8023). |
 | First boot shows the progress strip for minutes | The cache is absent (fresh key, or after Run live), so the seed is running live. Subsequent boots are instant. |
 | Blank page / stale UI after pulling changes | Hard-refresh (Ctrl+F5); the front end is static files, the browser may cache them. |
+| Hosted: every route 500s with `could not import "app.py"` | Vercel's Python detection grabbed a root-level `app.py` as the entrypoint instead of `api/index.py`. That file is now `local_server.py` and the app is assembled in `server.py`, so no root module can be mistaken for the deployment. If you re-add an `app.py`, expect this back. |
 | Hosted: `.docx` upload refused | Expected — no LibreOffice in the serverless runtime. Send a PDF, or run locally. |
 | Hosted: a page image fails to load | The instance never saw that upload; the browser re-posts it to `/api/rehydrate` and retries once automatically. |
 | Hosted: upload times out on a very large document | Each extraction window is one function call. Lower `extract_chunk_pages` in `server.py`'s bootstrap, or raise `maxDuration` in `vercel.json` (needs a paid plan). |
@@ -256,8 +263,8 @@ lower `.wordmark { height }` in `styles.css`.
 ## Layout
 
 ```
-app.py                  local runner: the API below + the front end from public/
-server.py               the stateless API — every endpoint a pure function
+local_server.py         local runner (NOT app.py — see the deploy note below)
+server.py               the stateless API + the static mount; the whole app lives here
 api/index.py            Vercel entry point (same app, /api/* only)
 vercel.json             function config + /api routing; public/ is served by the CDN
 contract.py             model schemas + prompts (PROMPT_VERSION keys the cache; MODEL lives here)

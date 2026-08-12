@@ -28,6 +28,7 @@ from typing import List, Optional
 import pymupdf
 from fastapi import Body, FastAPI, File, Form, UploadFile
 from fastapi.responses import JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
 
 import contract
 import gemini
@@ -269,3 +270,20 @@ def clear_cache() -> JSONResponse:
                                                    "cache, so there is nothing to clear here. "
                                                    "Run the app locally to force a live run."})
     return JSONResponse({"ok": True, "cleared": gemini.clear_cache()})
+
+
+# ---------------------------------------------------------------- the app
+# The front end is mounted here, last, so the /api routes above always win.
+#
+# Mounted on the API object itself rather than in a wrapper module, because
+# hosts pick their own entrypoint: Vercel's Python detection grabs a root
+# app.py/server.py if it finds one, and whichever module it lands on must
+# serve the whole app. Guarded on existence so a bundle without public/
+# degrades to an API-only deploy instead of failing at import time — an
+# ImportError here takes down every route, including the static ones.
+PUBLIC = HERE / "public"
+if PUBLIC.is_dir():
+    api.mount("/", StaticFiles(directory=PUBLIC, html=True), name="public")
+else:                                     # pragma: no cover - deploy shape only
+    import sys
+    print(f"warning: {PUBLIC} is not in this bundle; serving the API only", file=sys.stderr)
