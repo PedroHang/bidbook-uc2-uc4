@@ -187,6 +187,32 @@ def main() -> int:
     except run.NotScopeDocError as exc:
         check("insurance" in exc.doc_type, "COI rejected with the right doc type")
 
+    # ------------------------------------------------- stateless / hosting
+    # the precomputed seed is what a fresh deploy serves with no API key
+    pre = HERE / "data" / "precomputed" / "seed.json"
+    check(pre.exists(), "precomputed seed is committed")
+    if pre.exists():
+        blob = json.loads(pre.read_text(encoding="utf-8"))
+        check(len(blob.get("page_texts") or []) == doc["pages"],
+              "precomputed seed carries page_texts, so re-scoring needs no server state")
+        check(blob["evaluation"]["scorecard_version"] == sc.get("version", 1),
+              "precomputed seed matches the committed scorecard version")
+        check(any(l["rects"] for l in blob["lines"]), "precomputed seed has baked highlight rects")
+
+    # the PDF is optional everywhere: verification runs on text, rects are extra
+    raw_probe = [{"csi_raw": "033000", "scope_summary": "probe",
+                  "responsibility": "Landlord", "verbatim_quote": lines[0]["quote"],
+                  "page_hint": lines[0]["page"], "quantity_stated": "", "excluded": False}]
+    no_pdf = run.finalize_lines(raw_probe, page_texts, pdf=None)
+    check(no_pdf[0]["verified"] is True, "quotes verify with no PDF present")
+    check(no_pdf[0]["rects"] == [], "rects are simply deferred when no PDF is present")
+
+    # every step is separately callable, which is what the browser drives
+    prep = run.prepare(seed)
+    check(prep["doc"]["id"] == doc["id"], "prepare() reproduces the doc id")
+    chunk = run.extract_chunk(page_texts, 1, run.CHUNK_PAGES)
+    check(len(chunk) > 0, "extract_chunk() returns raw lines for one window")
+
     # quote verifier is whitespace/smart-quote tolerant but not fuzzy
     check(verify.find_quote("Landlord shall provide", ["a Landlord  shall\nprovide b"], 1) == 1,
           "verifier tolerates whitespace")

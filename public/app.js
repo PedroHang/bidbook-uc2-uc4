@@ -170,36 +170,77 @@ function fmtVal(v) {
   return s.length > 40 ? s.slice(0, 37) + "…" : (s === "" ? "(empty)" : s);
 }
 
-/* --------------------------------------------------------------- polling */
+/* ------------------------------------------------------------------- boot
 
-async function fetchState() {
+   There is no polling. The server holds no session state, so nothing arrives
+   unbidden: the browser owns the result, the scorecard and the audit log, and
+   drives the pipeline one call at a time. That is what lets this run on
+   serverless hosting, and it is also why the page no longer yanks itself back
+   to the top — a 5-second poll used to replace #view wholesale mid-scroll. */
+
+const LS_SCORECARD = "siq.scorecard";
+const LS_AUDIT = "siq.audit";
+
+function setPhase(mode, stage, detail) {
+  S.server.mode = mode;
+  S.server.stage = stage == null ? -1 : stage;
+  S.server.stage_detail = detail || "";
+  render();
+}
+
+function setFailure(title, message) {
+  S.server.mode = "blocked";
+  S.server.stage = -1;
+  S.server.error_title = title || "The analysis failed.";
+  S.server.error = message || "";
+  render();
+}
+
+async function boot() {
+  S.server = {
+    mode: "starting", stage: 0, stage_detail: "loading", stages: [],
+    error: "", error_title: "", result: null,
+    scorecard: null, personas: [], portfolio: [], audit: [], has_key: false, features: {},
+  };
+  render();
   try {
-    const res = await fetch("/state");
-    const data = await res.json();
-    const prevMode = S.server ? S.server.mode : "starting";
-    S.server = data;
+    const bs = await fetch("/api/bootstrap").then(r => r.json());
+    S.server.stages = bs.stages;
+    S.server.personas = bs.personas;
+    S.server.portfolio = bs.portfolio;
+    S.server.has_key = bs.has_key;
+    S.server.features = bs.features || {};
+    S.chunkPages = bs.extract_chunk_pages || 12;
+    S.seedScorecard = bs.scorecard_seed;
 
-    const doc = docInfo();
-    if (doc && doc.id !== S.lastDocId) {
-      S.lastDocId = doc.id;
-      S.open = null; S.cite = null; S.viewer = false; S.evalViewer = false;
-      S.fDiv = S.fResp = S.fMatch = S.fStatus = null; S.fReview = false; S.search = "";
-      S.page = 1;
-      if (prevMode === "processing" || prevMode === "starting") startReveal();
-      else S.reveal = 999;
-    }
-    render();
-    schedulePoll();
+    const stored = localStorage.getItem(LS_SCORECARD);
+    S.server.scorecard = stored ? JSON.parse(stored) : bs.scorecard_seed;
+    S.server.audit = JSON.parse(localStorage.getItem(LS_AUDIT) || "[]");
+
+    const seed = await fetch("/api/seed").then(r => r.json());
+    if (seed && seed.doc) adoptResult(seed, true);
+    else { S.server.mode = "idle"; render(); }
   } catch (e) {
-    schedulePoll();
+    setFailure("Could not reach the API.", String(e));
   }
 }
 
-function schedulePoll() {
-  clearTimeout(pollTimer);
-  const mode = S.server ? S.server.mode : "starting";
-  const ms = (mode === "processing" || mode === "starting") ? 650 : 5000;
-  pollTimer = setTimeout(fetchState, ms);
+/* A result comes either from the precomputed seed or from a run we just drove.
+   page_texts ride alongside so re-scoring needs nothing held on the server. */
+function adoptResult(res, reveal) {
+  S.pageTexts = res.page_texts || S.pageTexts || [];
+  const clean = Object.assign({}, res);
+  delete clean.page_texts;
+  S.server.result = clean;
+  S.server.mode = "idle";
+  S.server.stage = -1;
+  S.server.error = ""; S.server.error_title = "";
+  S.lastDocId = clean.doc ? clean.doc.id : null;
+  S.open = null; S.cite = null; S.viewer = false; S.evalViewer = false;
+  S.fDiv = S.fResp = S.fMatch = S.fStatus = null; S.fReview = false; S.search = "";
+  S.page = 1;
+  if (reveal && clean.lines && clean.lines.length) startReveal();
+  else { S.reveal = 999; render(); }
 }
 
 function startReveal() {
@@ -259,8 +300,8 @@ document.addEventListener("click", (e) => {
   else if (a === "decision-mode") { S.decisionMode = el.dataset.mode; render(); }
   else if (a === "tap-score") { tapScore(el.dataset.id, parseInt(el.dataset.score, 10)); }
   else if (a === "clear-score") { tapScore(el.dataset.id, null); }
-  else if (a === "run-anyway") { post("/scope/run-anyway"); }
-  else if (a === "rerun-eval") { post("/evaluation/rerun"); }
+  else if (a === "run-anyway") { runPipeline(null, { forceScope: true }); }
+  else if (a === "rerun-eval") { runPipeline(null); }
   else if (a === "goto-setup") { S.tab = "decision"; S.decisionMode = "setup"; render(); }
   else if (a === "toggle-rule-open") { const id = el.dataset.id; S.ruleOpen = (S.ruleOpen === id ? null : id); render(); }
   else if (a === "add-rule") { addRule(); }
@@ -372,50 +413,214 @@ function revertOne(idx) {
   render();
 }
 
-async function post(url, body) {
+async function postJSON(url, body) {
   const res = await fetch(url, {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
   });
-  const out = await res.json().catch(() => ({}));
-  if (out && out.ok === false) alert(out.error || "request failed");
-  fetchState();
+  return res.json().catch(() => ({ ok: false, error: `${res.status} ${res.statusText}` }));
+}
+
+/* --- deterministic aggregation, mirroring pipeline/evaluate.reaggregate ---
+   The weights and knockouts come off the LINE, which is the snapshot the
+   evaluation was scored under; the scorecard only supplies bands and the gate. */
+function reaggLines(sc, lns) {
+  const active = lns.filter(l => l.active !== false);
+  const scored = active.filter(l => l.score != null);
+  const total = scored.reduce((n, l) => n + l.score * l.weight, 0);
+  const mx = scored.reduce((n, l) => n + 5 * l.weight, 0);
+  const normalized = mx ? Math.round(total / mx * 100) : 0;
+  let rating = "PASS";
+  (sc.bands || []).slice().sort((a, b) => b.min - a.min).some(b => {
+    if (normalized >= b.min) { rating = b.label; return true; }
+    return false;
+  });
+  const knockouts = scored.filter(l => l.knockout && l.score <= l.knockout.max_trigger_score)
+                          .map(l => l.name);
+  const below = normalized < (sc.threshold || 0);
+  return {
+    total: Math.round(total * 10) / 10, max: Math.round(mx * 10) / 10, normalized,
+    rating, verdict: (knockouts.length || below) ? "NO-BID" : "BID",
+    scored_count: scored.length, rule_count: active.length,
+    knockouts_triggered: knockouts,
+    gate: { threshold: sc.threshold || 0, enforced: !!sc.gate_enforced,
+            below_threshold: below, passed: !(knockouts.length || below) },
+  };
+}
+
+function applyGateToResult() {
+  const r = result(), ev = evaluation();
+  if (!r || !ev) return;
+  const blocked = ev.gate.enforced && !ev.gate.passed && r.lines === null;
+  r.scope_blocked = blocked;
+  if (blocked) {
+    r.scope_block_reason = ev.knockouts_triggered.length
+      ? "knockout triggered: " + ev.knockouts_triggered.join(", ")
+      : `score ${ev.normalized} is below the bid threshold (${ev.gate.threshold})`;
+  } else {
+    r.scope_block_reason = "";
+  }
+}
+
+async function refreshNarrative() {
+  const ev = evaluation();
+  if (!ev) return;
+  const out = await postJSON("/api/narrative", {
+    lines: ev.lines.map(l => ({ name: l.name, score: l.score, weight: l.weight,
+                                needs_human: l.needs_human, evidence: l.evidence })),
+    verdict: ev.verdict, rating: ev.rating,
+  });
+  if (out.ok && out.narrative) { ev.narrative = out.narrative; render(); }
 }
 
 async function tapScore(ruleId, score) {
-  await post("/evaluation/score", { rule_id: ruleId, score, persona: S.persona });
+  const ev = evaluation();
+  if (!ev) return;
+  const line = ev.lines.find(l => l.rule_id === ruleId);
+  if (!line) return;
+  const p = (S.server.personas || []).find(x => x.id === S.persona) || { id: S.persona, name: S.persona, role: "" };
+  if (score == null) {
+    line.score = null; line.needs_human = true; line.scored_by = null;
+    line.evidence = "The model never sees this rule. Tap a score.";
+  } else {
+    line.score = score; line.needs_human = false; line.scored_by = p.id;
+    line.evidence = `Scored by ${p.name} (${p.role})`;
+  }
+  Object.assign(ev, reaggLines(savedSc(), ev.lines));
+  applyGateToResult();
+  render();
+  refreshNarrative();          // a model call; the tap already landed
 }
 
-async function saveScorecard() {
+function saveScorecard() {
+  const changes = pendingChanges();
+  if (!changes.length) { S.draft = null; S.confirmOpen = false; render(); return; }
   const flips = portfolioFlips(savedSc(), S.draft);
   const note = (flips.toNo || flips.toBid)
     ? `${flips.toNo} bid(s) flipped BID→NO-BID, ${flips.toBid} flipped NO-BID→BID across the SAMPLE portfolio at save time`
     : "";
-  const res = await fetch("/scorecard", {
-    method: "PUT", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ scorecard: S.draft, persona: S.persona, flips_note: note }),
-  });
-  const out = await res.json().catch(() => ({}));
-  if (out.ok === false) { alert(out.error || "save failed"); return; }
+  const from = savedSc().version || 1;
+  const next = deep(S.draft);
+  next.version = from + 1;
+  const p = (S.server.personas || []).find(x => x.id === S.persona) || { id: S.persona, name: S.persona, role: "" };
+  const entry = {
+    ts: new Date().toISOString().slice(0, 19).replace("T", " "),
+    persona: p, version_from: from, version_to: next.version,
+    changes: changes.map(c => ({ path: c.label, before: c.before, after: c.after })),
+    flips_note: note,
+  };
+  S.server.scorecard = next;
+  S.server.audit = [entry].concat(S.server.audit || []);
+  localStorage.setItem(LS_SCORECARD, JSON.stringify(next));
+  localStorage.setItem(LS_AUDIT, JSON.stringify(S.server.audit));
   S.draft = null; S.confirmOpen = false;
-  fetchState();
+  // the live evaluation keeps its own weight snapshot; only bands and the gate
+  // follow the saved scorecard, exactly as the server does it
+  const ev = evaluation();
+  if (ev) { Object.assign(ev, reaggLines(next, ev.lines)); applyGateToResult(); }
+  render();
 }
 
 async function doReset() {
-  if (!confirm("Clear the cached model responses, drop uploads, restore the seed scorecard and audit log, and re-run the sample live?")) return;
+  if (!confirm("Restore the seed scorecard and clear the audit log, drop the cached model responses, and reload the sample?")) return;
   S.draft = null;
-  await fetch("/reset", { method: "POST" });
-  S.lastDocId = null;
-  fetchState();
+  localStorage.removeItem(LS_SCORECARD);
+  localStorage.removeItem(LS_AUDIT);
+  const out = await postJSON("/api/clear-cache");
+  await boot();
+  if (out && out.ok === false && out.error) {
+    S.server.result.warnings = (S.server.result.warnings || []).concat([out.error]);
+    render();
+  }
+}
+
+/* ------------------------------------------------ the client-driven pipeline
+   Each step is its own request, so no single call runs for minutes and the
+   progress strip reports what actually just happened. */
+
+async function runPipeline(file, opts) {
+  const forceScope = !!(opts && opts.forceScope);
+  S.uploadFile = file || S.uploadFile;
+
+  let doc = null, pageTexts = null, warnings = [];
+  if (file) {
+    setPhase("processing", 0, file.name);
+    const fd = new FormData();
+    fd.append("file", file);
+    const prep = await fetch("/api/prepare", { method: "POST", body: fd })
+      .then(r => r.json()).catch(e => ({ ok: false, error: String(e) }));
+    if (!prep.ok) { setFailure(prep.title, prep.error); return; }
+    doc = prep.doc; pageTexts = prep.page_texts; warnings = prep.warnings || [];
+    S.pageTexts = pageTexts;
+  } else {
+    doc = docInfo(); pageTexts = S.pageTexts;
+    if (!doc || !pageTexts || !pageTexts.length) { setFailure("Nothing to re-run.", ""); return; }
+  }
+
+  setPhase("processing", 3, `${savedSc().name} v${savedSc().version || 1}`);
+  const evRes = await postJSON("/api/evaluate", {
+    scorecard: savedSc(), page_texts: pageTexts, doc_id: doc.id,
+  });
+  if (!evRes.ok) { setFailure("Scoring failed.", evRes.error); return; }
+  const ev = evRes.evaluation;
+  warnings = warnings.concat(evRes.warnings || []);
+
+  setPhase("processing", 4, ev.verdict);
+  const blocked = ev.gate.enforced && !ev.gate.passed && !forceScope;
+
+  let lns = null;
+  if (!blocked) {
+    const chunk = S.chunkPages || 12;
+    const raw = [];
+    for (let start = 1; start <= pageTexts.length; start += chunk) {
+      setPhase("processing", 5, `${Math.min(start + chunk - 1, pageTexts.length)} of ${pageTexts.length} pages · ${raw.length} lines`);
+      const out = await postJSON("/api/extract", {
+        page_texts: pageTexts, start, count: chunk, doc_id: doc.id,
+      });
+      if (!out.ok) { setFailure("Extraction failed.", out.error); return; }
+      raw.push.apply(raw, out.raw_lines);
+      warnings = warnings.concat(out.warnings || []);
+    }
+    setPhase("processing", 6, `${raw.length} quotes`);
+    setPhase("processing", 7, `${raw.length} lines against the SAMPLE catalogue`);
+    const fin = await postJSON("/api/finalize", {
+      raw_lines: raw, page_texts: pageTexts, doc_id: doc.id,
+    });
+    if (!fin.ok) { setFailure("Verification failed.", fin.error); return; }
+    lns = fin.lines;
+    warnings = warnings.concat(fin.warnings || []);
+  }
+
+  setPhase("processing", 8, lns ? `${lns.length} lines` : "skipped — gate");
+  adoptResult({
+    doc, evaluation: ev, lines: lns,
+    scope_blocked: blocked,
+    scope_block_reason: blocked
+      ? (ev.knockouts_triggered.length
+          ? "knockout triggered: " + ev.knockouts_triggered.join(", ")
+          : `score ${ev.normalized} is below the bid threshold (${ev.gate.threshold})`)
+      : "",
+    scope_forced: forceScope && ev.gate.enforced && !ev.gate.passed,
+    provenance: evRes.provenance || "cached",
+    warnings, page_texts: pageTexts,
+  }, true);
 }
 
 async function uploadFile(file) {
+  await runPipeline(file);
+}
+
+/* A page image can 404 when a serverless instance never saw this upload.
+   Re-post the file we still hold in the browser, then retry once. */
+async function pageImageFailed(img) {
+  if (img.dataset.retried || !S.uploadFile || !docInfo()) return;
+  img.dataset.retried = "1";
   const fd = new FormData();
-  fd.append("file", file);
-  const res = await fetch("/upload", { method: "POST", body: fd });
-  const out = await res.json();
-  if (!out.ok) alert(out.error || "upload failed");
-  fetchState();
+  fd.append("doc_id", docInfo().id);
+  fd.append("file", S.uploadFile);
+  const out = await fetch("/api/rehydrate", { method: "POST", body: fd })
+    .then(r => r.json()).catch(() => ({ ok: false }));
+  if (out.ok) img.src = img.src.split("&_r=")[0] + "&_r=1";
 }
 
 window.addEventListener("dragover", (e) => e.preventDefault());
@@ -456,11 +661,39 @@ function liveConsequenceUpdate(el) {
   if (bar) bar.style.display = pendingChanges().length ? "flex" : "none";
 }
 
-/* ---------------------------------------------------------------- render */
+/* ---------------------------------------------------------------- render
+
+   render() rebuilds #view from scratch, which resets the scroll offset of every
+   scrollable box inside it. Anything the reader can scroll therefore carries a
+   data-scroll-key, and we snapshot and restore those offsets around the swap —
+   otherwise tapping a score or dragging a weight would throw the page back to
+   the top mid-read. Keys must be stable across renders, never index-based.
+
+   The memory outlives a single swap on purpose: a box that is absent from the
+   current view (the other tab, the other decision mode) must still find its
+   place when the reader comes back to it. */
+
+const SCROLL_MEM = {};
+
+function snapshotScroll() {
+  document.querySelectorAll("[data-scroll-key]").forEach(el => {
+    SCROLL_MEM[el.dataset.scrollKey] = [el.scrollTop, el.scrollLeft];
+  });
+}
+
+function restoreScroll() {
+  document.querySelectorAll("[data-scroll-key]").forEach(el => {
+    const v = SCROLL_MEM[el.dataset.scrollKey];
+    if (!v || (!v[0] && !v[1])) return;
+    el.scrollTop = v[0];
+    el.scrollLeft = v[1];
+  });
+}
 
 function render(keepFocus) {
   const focusedId = document.activeElement && document.activeElement.id;
   const selStart = focusedId === "search-input" ? document.activeElement.selectionStart : null;
+  snapshotScroll();
 
   $("#tab-decision").classList.toggle("active", S.tab === "decision");
   $("#tab-scope").classList.toggle("active", S.tab === "scope");
@@ -508,6 +741,8 @@ function render(keepFocus) {
   document.querySelectorAll("input[type=range].weight").forEach(el => {
     el.style.setProperty("--fill", ((parseFloat(el.value) - 0.5) / 2.5 * 100) + "%");
   });
+
+  restoreScroll();
 
   if (focusedId === "search-input") {
     const inp = $("#search-input");
@@ -771,7 +1006,7 @@ function renderDonut(R, total) {
         <span style="font-size:10px;letter-spacing:.7px;color:var(--faint);font-weight:700">LINES</span>
       </div>
     </div>
-    <div class="siq-scroll" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;max-height:210px;overflow:auto">${legend}</div>
+    <div class="siq-scroll" data-scroll-key="donut-legend" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;max-height:210px;overflow:auto">${legend}</div>
   </div>`;
 }
 
@@ -894,7 +1129,7 @@ function renderTable(R, rows, total) {
         ${chipHtml}
         ${anyFilter ? `<button data-action="clear-filters" style="background:transparent;border:none;padding:0;color:var(--dim);font-size:11.5px;cursor:pointer;text-decoration:underline;text-underline-offset:3px">Clear all</button>` : ""}
       </div>
-      <div class="siq-scroll" style="flex:1;min-height:0;overflow:auto">
+      <div class="siq-scroll" data-scroll-key="scope-table" style="flex:1;min-height:0;overflow:auto">
         <table style="width:100%;table-layout:fixed;border-collapse:collapse;font-size:13px;min-width:${ultra ? 290 : (compact ? 520 : 960)}px">
           <thead><tr>
             <th data-action="toggle-sort" style="${thBase};padding-left:16px;cursor:pointer;white-space:nowrap;width:100px">CSI CODE ${S.sortAsc ? "&#8593;" : "&#8595;"}</th>
@@ -1055,10 +1290,10 @@ function renderViewer(asDrawer) {
       <span style="color:var(--warn);font-size:13px;line-height:1.3">&#9888;</span>
       <span style="font-size:12.5px;color:var(--warn-deep)">The quoted sentence was not found verbatim in the parsed text. No highlight is drawn.</span>
     </div>` : ""}
-    <div id="pages-box" class="siq-scroll" style="flex:1;min-height:0;overflow:auto;background:#EDF1F5;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:14px">
+    <div id="pages-box" class="siq-scroll" data-scroll-key="pages-box" style="flex:1;min-height:0;overflow:auto;background:#EDF1F5;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:14px">
       <div style="position:relative;width:${dispW}px;height:${dispH}px;flex:none;background:#FFF;box-shadow:0 2px 10px rgba(26,37,48,.13);border-radius:3px">
-        <img src="/page?doc=${esc(d.id)}&n=${S.page}&scale=${scale}" alt="page ${S.page}"
-          style="width:100%;height:100%;display:block" draggable="false">
+        <img src="/api/page?doc=${esc(d.id)}&n=${S.page}&scale=${scale}" alt="page ${S.page}"
+          onerror="pageImageFailed(this)" style="width:100%;height:100%;display:block" draggable="false">
         ${overlays}
       </div>
       <div style="display:flex;align-items:center;gap:8px">
@@ -1096,7 +1331,7 @@ function renderDecision() {
     </main>`;
   }
   return `
-  <main class="siq-scroll" style="flex:1;min-height:0;overflow:auto;padding:20px 24px 60px;display:flex;justify-content:center">
+  <main class="siq-scroll" data-scroll-key="decision-${S.decisionMode}" style="flex:1;min-height:0;overflow:auto;padding:20px 24px 60px;display:flex;justify-content:center">
     <div style="width:1120px;max-width:100%;display:flex;flex-direction:column;gap:14px">
       <div style="display:flex;align-items:center;gap:12px">
         <div class="seg">
@@ -1478,7 +1713,7 @@ function consequencePanelInner() {
     ${pending.length ? `
     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:10px">
       <div class="klabel" style="margin-bottom:8px">PENDING CHANGES (${pending.length})</div>
-      <div style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto" class="siq-scroll">${pendingHtml}</div>
+      <div class="siq-scroll" data-scroll-key="pending" style="display:flex;flex-direction:column;gap:5px;max-height:220px;overflow:auto">${pendingHtml}</div>
     </div>` : `
     <div style="margin-top:16px;font-size:11.5px;color:var(--faint)">Drag a weight or edit a rule — the effect on this bid and the portfolio shows here before anything is saved. Past evaluations always keep the weights they were scored under.</div>`}`;
 }
@@ -1513,7 +1748,7 @@ function renderOverlays() {
           <span style="flex:1"></span>
           <button class="btn quiet" data-action="close-audit">Close</button>
         </div>
-        <div class="siq-scroll" style="flex:1;overflow:auto">
+        <div class="siq-scroll" data-scroll-key="audit" style="flex:1;overflow:auto">
           ${entries || '<div style="padding:30px;text-align:center;font-size:12.5px;color:var(--faint)">No changes this session — the scorecard is as seeded.</div>'}
         </div>
       </div>`;
@@ -1548,4 +1783,5 @@ function renderOverlays() {
 /* ---------------------------------------------------------------- boot */
 
 window.uploadFile = uploadFile;
-fetchState();
+window.pageImageFailed = pageImageFailed;
+boot();

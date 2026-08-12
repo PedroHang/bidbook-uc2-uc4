@@ -83,7 +83,7 @@ accepted as an alias. The model used is `gemini-3.1-pro-preview`
 (set in `contract.py: MODEL`; if Google retires it, pick a current one from
 `client.models.list()` and update that one constant).
 
-### 4. Run
+### 4. Run locally
 
 **Linux / macOS**
 ```bash
@@ -106,8 +106,64 @@ a fresh boot is the real pipeline, not an animation.
 .venv/bin/python selftest.py          # Windows: .venv\Scripts\python selftest.py
 ```
 
-Expected: `477 checks, 0 failures` (count grows as lines change), no browser,
+Expected: `485 checks, 0 failures` (count grows as lines change), no browser,
 no live calls, done in under a minute.
+
+### 6. Deploy to Vercel
+
+```bash
+npm i -g vercel
+vercel            # first run links the project
+vercel --prod
+```
+
+Nothing else to configure. `vercel.json` sends `/api/*` to the Python function
+in `api/index.py` and lets Vercel's CDN serve `public/` directly.
+
+**The deployed app works with no API key at all.** `data/precomputed/seed.json`
+holds a real, committed run of the sample document, so first paint is instant
+and every interactive beat — grounded citations with highlights, the dashboard
+and its filters, the scorecard, weight drags, knockouts, the gate, the audit
+log — works with zero model calls.
+
+Set `GEMINI_API_KEY` in the Vercel project's environment variables to enable
+**uploads and re-scoring** on the hosted app. Two hosted-only limits, both
+stated honestly in the UI rather than hidden:
+
+| Limit | Why | What happens |
+| --- | --- | --- |
+| **PDF uploads only** | LibreOffice is not available in the serverless runtime | A `.docx` upload returns a clear message telling you to send a PDF or run locally |
+| **No durable cache** | the deployment bundle is read-only | Responses cache per warm instance only; "Run live" says there is nothing durable to clear |
+
+Regenerate the precomputed seed whenever the pipeline, the prompts or the seed
+scorecard change, then redeploy:
+
+```bash
+.venv/bin/python tools/precompute_seed.py
+```
+
+---
+
+## Architecture note: why the server holds no state
+
+Every endpoint is a pure function of its request plus the read-only bundled
+data. **The browser owns the analysis result, the scorecard and the audit log**
+(the latter two in `localStorage`), and it drives the pipeline one call at a
+time: `prepare → evaluate → [gate] → extract × N → finalize`. The progress
+strip reports the step that actually just finished.
+
+This is what makes serverless hosting possible — a background thread would die
+when the response returns, and an in-process dict would not survive to the next
+request. It also removed a 5-second polling loop that replaced the whole view
+mid-scroll, which is why the page no longer jumps back to the top while you
+read. Scrollable regions additionally carry a `data-scroll-key` and their
+offsets are restored across re-renders.
+
+Uploaded PDFs are cached in the OS temp dir only so page images and highlight
+rectangles can be produced without re-uploading. A cold serverless instance
+simply misses that cache and the browser re-posts the file to `/api/rehydrate`.
+**Quote verification never depends on it** — verification runs against the page
+text, so highlights are the only thing that can arrive one call later.
 
 ---
 
@@ -157,6 +213,10 @@ no live calls, done in under a minute.
 | Port 8023 busy | `--port 8024` (any free port works; nothing else pins 8023). |
 | First boot shows the progress strip for minutes | The cache is absent (fresh key, or after Run live), so the seed is running live. Subsequent boots are instant. |
 | Blank page / stale UI after pulling changes | Hard-refresh (Ctrl+F5); the front end is static files, the browser may cache them. |
+| Hosted: `.docx` upload refused | Expected — no LibreOffice in the serverless runtime. Send a PDF, or run locally. |
+| Hosted: a page image fails to load | The instance never saw that upload; the browser re-posts it to `/api/rehydrate` and retries once automatically. |
+| Hosted: upload times out on a very large document | Each extraction window is one function call. Lower `extract_chunk_pages` in `server.py`'s bootstrap, or raise `maxDuration` in `vercel.json` (needs a paid plan). |
+| Scorecard edits or audit entries reappear/disappear | They live in the browser's `localStorage`, per browser. The gear button restores the seed and clears them. |
 
 ---
 
@@ -177,7 +237,10 @@ no live calls, done in under a minute.
 ## Layout
 
 ```
-app.py                  FastAPI server, port 8023 (+ the static Bid Decision data)
+app.py                  local runner: the API below + the front end from public/
+server.py               the stateless API — every endpoint a pure function
+api/index.py            Vercel entry point (same app, /api/* only)
+vercel.json             function config + /api routing; public/ is served by the CDN
 contract.py             model schemas + prompts (PROMPT_VERSION keys the cache; MODEL lives here)
 gemini.py               model layer: live Interactions call + response cache + .env loading
 pipeline/convert.py     docx -> PDF (LibreOffice), PDF -> page text (PyMuPDF)
@@ -187,13 +250,15 @@ pipeline/match.py       catalogue funnel: hard filter -> semantic rank -> top 3 
 pipeline/run.py         orchestrator: doc-type gate -> UC#4 scoring -> bid gate -> extraction
 pipeline/evaluate.py    UC#4 engine: rule partition by source, deterministic aggregation
 pipeline/scorecard.py   scorecard store: seed + runtime versioning + server-side diff audit
-static/                 vanilla JS front end (no framework, no build, no CDN)
+public/                 vanilla JS front end (no framework, no build, no CDN)
 data/seed/              the real sample document (.docx + its converted .pdf)
 data/sample_catalogue.json  fabricated SAMPLE price book (no prices), see gen_catalogue.py
 data/scorecard_seed.json    the customer's real scorecard rows (seed; runtime edits go to data/runtime/)
 data/sample_crm.json        fabricated SAMPLE mini-CRM + derived-formula inputs
 data/sample_portfolio.json  fabricated SAMPLE 14-bid portfolio for the what-if panel
 cache/                  committed model-response cache for the seed run
+data/precomputed/seed.json  a real committed run of the sample; what /api/seed serves
+tools/precompute_seed.py    regenerates it
 selftest.py             acceptance checks
 ```
 

@@ -19,6 +19,7 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import tempfile
 import threading
 from pathlib import Path
 from typing import Optional, Type
@@ -28,8 +29,25 @@ from pydantic import BaseModel
 import contract
 
 HERE = Path(__file__).resolve().parent
+
+# Read the committed cache; write wherever this deploy can write. On Vercel the
+# bundle is read-only and only the temp dir accepts writes, so a live call there
+# still succeeds and still caches, just for the life of that instance.
+CACHE_READ_DIRS = [HERE / "cache"]
 CACHE_DIR = HERE / "cache"
-CACHE_DIR.mkdir(exist_ok=True)
+try:
+    CACHE_DIR.mkdir(exist_ok=True)
+    probe = CACHE_DIR / ".writable"
+    probe.write_text("", encoding="utf-8")
+    probe.unlink()
+except OSError:
+    CACHE_DIR = Path(tempfile.gettempdir()) / "siq-cache"
+    CACHE_DIR.mkdir(parents=True, exist_ok=True)
+    CACHE_READ_DIRS.insert(0, CACHE_DIR)
+
+
+def cache_writable_in_repo() -> bool:
+    return CACHE_DIR == HERE / "cache"
 
 # .env in the repo root, same convention as the sibling demos.
 # A key already exported in the shell always wins over the file.
@@ -89,12 +107,26 @@ def _weaken(value: str) -> None:
             _PROVENANCE = value
 
 
-def _cache_path(prompt: str, schema_name: str) -> Path:
+def _cache_name(prompt: str, schema_name: str) -> str:
     material = json.dumps(
         {"p": prompt, "s": schema_name, "v": contract.PROMPT_VERSION, "m": contract.MODEL},
         sort_keys=True,
     )
-    return CACHE_DIR / (hashlib.sha256(material.encode()).hexdigest()[:24] + ".json")
+    return hashlib.sha256(material.encode()).hexdigest()[:24] + ".json"
+
+
+def _cache_path(prompt: str, schema_name: str) -> Path:
+    """Where a new entry gets written."""
+    return CACHE_DIR / _cache_name(prompt, schema_name)
+
+
+def _cache_hit(prompt: str, schema_name: str) -> Optional[Path]:
+    name = _cache_name(prompt, schema_name)
+    for d in CACHE_READ_DIRS:
+        p = d / name
+        if p.exists():
+            return p
+    return None
 
 
 def _response_text(interaction) -> str:
@@ -155,16 +187,17 @@ def call(prompt: str, system: str, schema: Type[BaseModel], use_cache: bool = Tr
     Order: cache hit (when allowed) -> live call -> (API down) cache -> raise.
     Invalid JSON from a live call retries once before raising.
     """
+    hit = _cache_hit(prompt, schema.__name__)
     path = _cache_path(prompt, schema.__name__)
 
-    if use_cache and path.exists():
+    if use_cache and hit:
         _weaken("cached")
-        return schema.model_validate_json(path.read_text(encoding="utf-8"))
+        return schema.model_validate_json(hit.read_text(encoding="utf-8"))
 
     if not has_key():
-        if path.exists():
+        if hit:
             _weaken("cached")
-            return schema.model_validate_json(path.read_text(encoding="utf-8"))
+            return schema.model_validate_json(hit.read_text(encoding="utf-8"))
         raise RuntimeError(
             "No GEMINI_API_KEY set and no cache entry for this request. "
             "Set the key (or restore the committed cache) and retry."
@@ -180,21 +213,28 @@ def call(prompt: str, system: str, schema: Type[BaseModel], use_cache: bool = Tr
                 raw = raw.strip("`")
                 raw = raw[raw.find("{"):]
             obj = schema.model_validate_json(raw)
-            path.write_text(obj.model_dump_json(indent=1), encoding="utf-8")
+            try:
+                path.write_text(obj.model_dump_json(indent=1), encoding="utf-8")
+            except OSError as werr:                  # read-only deploy: still serve the call
+                warn(f"response not cached ({werr})")
             return obj
         except Exception as exc:  # noqa: BLE001 — surfaced below, never swallowed
             last_exc = exc
             warn(f"model call attempt {attempt} failed: {exc}")
-    if path.exists():
+    if hit:
         warn("live call failed twice; serving the cached response for this request")
         _weaken("cached")
-        return schema.model_validate_json(path.read_text(encoding="utf-8"))
+        return schema.model_validate_json(hit.read_text(encoding="utf-8"))
     raise RuntimeError(f"model call failed twice and no cache entry exists: {last_exc}")
 
 
 def clear_cache() -> int:
     n = 0
-    for p in CACHE_DIR.glob("*.json"):
-        p.unlink()
-        n += 1
+    for d in CACHE_READ_DIRS:
+        for p in d.glob("*.json"):
+            try:
+                p.unlink()
+                n += 1
+            except OSError:
+                pass
     return n

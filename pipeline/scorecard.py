@@ -38,7 +38,14 @@ def _load(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def seed() -> dict:
+    """The committed starting scorecard: the customer's real spreadsheet rows."""
+    return _load(SEED)
+
+
 def current() -> dict:
+    """Local/offline callers only. The web client owns its own copy and posts it
+    with each request, so nothing on the server depends on this file existing."""
     with _LOCK:
         return _load(RUNTIME) if RUNTIME.exists() else _load(SEED)
 

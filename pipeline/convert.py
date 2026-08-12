@@ -8,6 +8,7 @@ with no text layer is rejected honestly (scanned), never OCR'd silently.
 
 from __future__ import annotations
 
+import shutil
 import subprocess
 from pathlib import Path
 from typing import List, Tuple
@@ -15,6 +16,10 @@ from typing import List, Tuple
 import pymupdf
 
 LO_PROFILE = "file:///tmp/loprofile"
+
+
+def libreoffice_available() -> bool:
+    return shutil.which("soffice") is not None
 
 
 class ScannedPdfError(Exception):
@@ -31,6 +36,11 @@ def ensure_pdf(src: Path) -> Path:
         return src
     if src.suffix.lower() not in (".docx", ".doc"):
         raise ConversionError(f"unsupported file type: {src.suffix}")
+    if not libreoffice_available():
+        raise ConversionError(
+            "Word conversion needs LibreOffice, which is not installed on this host. "
+            "Upload a PDF instead, or run the app locally where LibreOffice is available."
+        )
     out = src.with_suffix(".pdf")
     if out.exists() and out.stat().st_mtime >= src.stat().st_mtime:
         return out

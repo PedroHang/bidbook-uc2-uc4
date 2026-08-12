@@ -62,7 +62,7 @@ def _derived_line(rule: dict) -> dict:
 
 
 def _doc_lines(rules: List[dict], instructions: str, page_texts: List[str],
-               pdf: Path, use_cache: bool) -> dict:
+               pdf: Optional[Path], use_cache: bool) -> dict:
     """One model call for ALL document rules; verify every quote server-side."""
     if not rules:
         return {}
@@ -90,7 +90,7 @@ def _doc_lines(rules: List[dict], instructions: str, page_texts: List[str],
                             "quote": s.verbatim_quote, "page": s.page_hint or 0,
                             "rects": [], "verified": False, "records": []}
             continue
-        rects = verify.quote_rects(pdf, page, s.verbatim_quote)
+        rects = verify.quote_rects(pdf, page, s.verbatim_quote) if pdf else []
         out[r["id"]] = {"score": s.proposed_score, "needs_human": False, "proposed_by": "model",
                         "evidence": s.rationale or "scored from the quoted passage",
                         "quote": s.verbatim_quote, "page": page, "rects": rects,
@@ -138,7 +138,8 @@ def narrative_for(lines: List[dict], agg: dict, use_cache: bool) -> Optional[dic
 
 # ------------------------------------------------------------- top level
 
-def evaluate(sc: dict, page_texts: List[str], pdf: Path, use_cache: bool = True) -> dict:
+def evaluate(sc: dict, page_texts: List[str], pdf: Optional[Path] = None,
+             use_cache: bool = True) -> dict:
     rules = [r for r in sc["rules"] if r.get("active")]
     doc_rules = [r for r in rules if r["source"] == "document"]
     doc_scored = _doc_lines(doc_rules, sc.get("instructions", ""), page_texts, pdf, use_cache)
