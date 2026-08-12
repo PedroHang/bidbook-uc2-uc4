@@ -20,10 +20,12 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import shutil
 import tempfile
 from pathlib import Path
 from typing import List, Optional
+from urllib.parse import parse_qs
 
 import pymupdf
 from fastapi import Body, FastAPI, File, Form, UploadFile
@@ -44,7 +46,41 @@ TMP.mkdir(parents=True, exist_ok=True)
 
 PORTFOLIO = json.loads((DATA / "sample_portfolio.json").read_text(encoding="utf-8"))["bids"]
 
-api = FastAPI(title="Scope IQ API")
+api = FastAPI(title="BidBookSoft demo API")
+
+
+class EndpointFromQuery:
+    """Route by query string, because hosts disagree about paths.
+
+    Vercel's filesystem routing maps this function to exactly one path,
+    /api/index, and a rewrite that funnels /api/* at it does NOT reliably
+    arrive with the original path attached — the app then sees /api/index for
+    every call and answers 404 to all of them, which is how the first working
+    deploy came up with an empty screen and no error.
+
+    So the client addresses endpoints as /api/index?ep=<name>: the one path
+    every host agrees on, plus a query string every host preserves. This
+    middleware turns that back into /api/<name> before routing, so the handlers
+    below stay ordinary readable routes and still work when called directly.
+    """
+
+    _SAFE = re.compile(r"[a-z][a-z-]{0,30}")
+    _COLLAPSED = ("/api", "/api/", "/api/index", "/api/index.py", "/api/index/")
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope.get("type") == "http" and scope.get("path") in self._COLLAPSED:
+            ep = (parse_qs(scope.get("query_string", b"").decode()).get("ep") or [""])[0]
+            if self._SAFE.fullmatch(ep):
+                scope = dict(scope)
+                scope["path"] = "/api/" + ep
+                scope["raw_path"] = scope["path"].encode()
+        await self.app(scope, receive, send)
+
+
+api.add_middleware(EndpointFromQuery)
 
 
 def _err(msg: str, code: int = 422, **extra) -> JSONResponse:
@@ -100,6 +136,16 @@ def seed() -> JSONResponse:
     if not PRECOMPUTED.exists():
         return _err("no precomputed seed in this build; run tools/precompute_seed.py", 503)
     return Response(content=PRECOMPUTED.read_text(encoding="utf-8"), media_type="application/json")
+
+
+@api.get("/api/seed-source")
+def seed_source() -> JSONResponse:
+    """The sample document's parsed text, so "Run live" can re-run the real
+    pipeline against it with no upload and no cache."""
+    if not PRECOMPUTED.exists():
+        return _err("no precomputed seed in this build", 503)
+    blob = json.loads(PRECOMPUTED.read_text(encoding="utf-8"))
+    return JSONResponse({"ok": True, "doc": blob["doc"], "page_texts": blob.get("page_texts", [])})
 
 
 # --------------------------------------------------------------- pipeline
@@ -266,10 +312,10 @@ def clear_cache() -> JSONResponse:
     """Local convenience: drop cached model responses so the next run is live.
     On a read-only deploy there is nothing durable to clear, and we say so."""
     if not gemini.cache_writable_in_repo():
-        return JSONResponse({"ok": False, "error": "This deploy serves a read-only response "
-                                                   "cache, so there is nothing to clear here. "
-                                                   "Run the app locally to force a live run."})
-    return JSONResponse({"ok": True, "cleared": gemini.clear_cache()})
+        return JSONResponse({"ok": True, "cleared": 0, "durable": False,
+                             "note": "This deploy's bundled cache is read-only, so nothing was "
+                                     "deleted; the run below bypasses the cache instead."})
+    return JSONResponse({"ok": True, "cleared": gemini.clear_cache(), "durable": True})
 
 
 # ---------------------------------------------------------------- the app

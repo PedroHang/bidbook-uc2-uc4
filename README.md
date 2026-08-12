@@ -121,6 +121,23 @@ Nothing else to configure. `vercel.json` sends `/api/*` to the Python function
 in `api/index.py` and lets Vercel's CDN serve `public/` directly. The whole
 deployment is about 1.3 MB.
 
+**Why the client calls `/api/index?ep=<name>`:** Vercel's filesystem routing
+maps the function to exactly one path, `/api/index`, and a rewrite that funnels
+`/api/*` at it does **not** reliably arrive carrying the original path — the app
+then sees `/api/index` for every call and 404s all of them, which produces a
+page that loads but is empty (no personas, no document, no error). Addressing
+endpoints through the one path every host agrees on, with the endpoint in a
+query string every host preserves, removes the guesswork. Server-side
+middleware turns `?ep=x` back into `/api/x`, so the handlers stay ordinary
+readable routes and still work when called directly.
+
+`_vercel_sim.py` reproduces that worst case locally — it collapses every
+`/api/*` request to `/api/index` before the app sees it:
+
+```bash
+.venv/bin/uvicorn _vercel_sim:app --port 8052   # then browse localhost:8052
+```
+
 **Why there is no `app.py`:** Vercel's Python framework detection treats a
 root-level `app.py` as *the* deployment entrypoint and builds it instead of
 `api/index.py`. The local runner is therefore `local_server.py`, and the whole
@@ -194,9 +211,12 @@ text, so highlights are the only thing that can arrive one call later.
   page with the sentence highlighted. Zoom (50-300%), Fit width, Expand.
 - **Click any chart segment or stat tile** to filter the table; active filters
   show as dismissible chips.
-- **Run live** (top right of the bar) / the gear icon: clears the model-response
-  cache, drops uploads, reseeds, and re-runs the sample against the model for
-  real. Use it once before a call so you can honestly say the run is live.
+- **Run live** (top right of the bar) / the gear icon: restores the seed
+  scorecard, clears the audit log, and **re-runs the sample against the model
+  for real**, bypassing the cache — roughly 3 minutes, and the provenance chip
+  flips to LIVE RUN when it finishes. Use it once before a call so you can
+  honestly say the run is live. With no API key configured the dialog says so
+  and it reloads the cached analysis instead of pretending.
 - **CACHED / LIVE RUN chip** in the bar states the current run's provenance.
 
 ### Branding
@@ -238,6 +258,7 @@ lower `.wordmark { height }` in `styles.css`.
 | Port 8023 busy | `--port 8024` (any free port works; nothing else pins 8023). |
 | First boot shows the progress strip for minutes | The cache is absent (fresh key, or after Run live), so the seed is running live. Subsequent boots are instant. |
 | Blank page / stale UI after pulling changes | Hard-refresh (Ctrl+F5); the front end is static files, the browser may cache them. |
+| Hosted: page loads but is empty — no personas, no document, no error | The API calls are not reaching their routes. Confirm `/api/index?ep=bootstrap` returns JSON with a `personas` array; if it returns `{"detail":"Not Found"}` the deployed build predates the query-addressed transport, so redeploy. |
 | Hosted: every route 500s with `could not import "app.py"` | Vercel's Python detection grabbed a root-level `app.py` as the entrypoint instead of `api/index.py`. That file is now `local_server.py` and the app is assembled in `server.py`, so no root module can be mistaken for the deployment. If you re-add an `app.py`, expect this back. |
 | Hosted: `.docx` upload refused | Expected — no LibreOffice in the serverless runtime. Send a PDF, or run locally. |
 | Hosted: a page image fails to load | The instance never saw that upload; the browser re-posts it to `/api/rehydrate` and retries once automatically. |

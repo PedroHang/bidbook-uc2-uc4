@@ -8,3 +8,4 @@ data/runtime/
 README.md
 .git/
 .vercel/
+_vercel_sim.py

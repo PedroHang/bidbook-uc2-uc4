@@ -181,6 +181,16 @@ function fmtVal(v) {
 const LS_SCORECARD = "siq.scorecard";
 const LS_AUDIT = "siq.audit";
 
+/* Every call goes to /api/index with the endpoint in the query string.
+   /api/index is the one path a host's filesystem routing always maps to the
+   function, and query strings always survive; a rewrite that funnels /api/*
+   at the function does NOT reliably carry the original path, which silently
+   404s every call. Server-side middleware turns ?ep=x back into /api/x. */
+function apiURL(ep, params) {
+  const q = new URLSearchParams(Object.assign({ ep }, params || {}));
+  return "/api/index?" + q.toString();
+}
+
 function setPhase(mode, stage, detail) {
   S.server.mode = mode;
   S.server.stage = stage == null ? -1 : stage;
@@ -204,7 +214,13 @@ async function boot() {
   };
   render();
   try {
-    const bs = await fetch("/api/bootstrap").then(r => r.json());
+    const bs = await fetch(apiURL("bootstrap")).then(r => r.json());
+    if (!bs || !Array.isArray(bs.personas) || !bs.scorecard_seed) {
+      setFailure("The API answered, but not with the app's data.",
+                 "GET " + apiURL("bootstrap") + " returned: " + JSON.stringify(bs).slice(0, 300) +
+                 " — the request reached the host but not this application's routes.");
+      return;
+    }
     S.server.stages = bs.stages;
     S.server.personas = bs.personas;
     S.server.portfolio = bs.portfolio;
@@ -217,9 +233,10 @@ async function boot() {
     S.server.scorecard = stored ? JSON.parse(stored) : bs.scorecard_seed;
     S.server.audit = JSON.parse(localStorage.getItem(LS_AUDIT) || "[]");
 
-    const seed = await fetch("/api/seed").then(r => r.json());
-    if (seed && seed.doc) adoptResult(seed, true);
-    else { S.server.mode = "idle"; render(); }
+    const seed = await fetch(apiURL("seed")).then(r => r.json());
+    if (seed && seed.doc) { adoptResult(seed, true); return; }
+    setFailure("The sample analysis could not be loaded.",
+               "GET " + apiURL("seed") + " returned: " + JSON.stringify(seed).slice(0, 300));
   } catch (e) {
     setFailure("Could not reach the API.", String(e));
   }
@@ -413,8 +430,8 @@ function revertOne(idx) {
   render();
 }
 
-async function postJSON(url, body) {
-  const res = await fetch(url, {
+async function postJSON(ep, body) {
+  const res = await fetch(apiURL(ep), {
     method: "POST", headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body || {}),
   });
@@ -465,7 +482,7 @@ function applyGateToResult() {
 async function refreshNarrative() {
   const ev = evaluation();
   if (!ev) return;
-  const out = await postJSON("/api/narrative", {
+  const out = await postJSON("narrative", {
     lines: ev.lines.map(l => ({ name: l.name, score: l.score, weight: l.weight,
                                 needs_human: l.needs_human, evidence: l.evidence })),
     verdict: ev.verdict, rating: ev.rating,
@@ -522,16 +539,30 @@ function saveScorecard() {
 }
 
 async function doReset() {
-  if (!confirm("Restore the seed scorecard and clear the audit log, drop the cached model responses, and reload the sample?")) return;
+  const live = !!(S.server && S.server.has_key);
+  const msg = live
+    ? "Restore the seed scorecard, clear the audit log, and RE-RUN the sample against the model for real?\n\nThis bypasses the cache and takes a couple of minutes."
+    : "Restore the seed scorecard and clear the audit log, and reload the sample?\n\nNo API key is configured on this host, so the analysis stays the cached one.";
+  if (!confirm(msg)) return;
+
   S.draft = null;
   localStorage.removeItem(LS_SCORECARD);
   localStorage.removeItem(LS_AUDIT);
-  const out = await postJSON("/api/clear-cache");
-  await boot();
-  if (out && out.ok === false && out.error) {
-    S.server.result.warnings = (S.server.result.warnings || []).concat([out.error]);
+  const cleared = await postJSON("clear-cache");
+
+  if (!live) {                       // nothing to run live with; reload as-is
+    await boot();
+    S.server.result.warnings = (S.server.result.warnings || [])
+      .concat(["No API key is configured on this host, so this is the cached analysis."]);
     render();
+    return;
   }
+
+  // reset the scorecard in memory, then re-run the sample with the cache off
+  S.server.scorecard = S.seedScorecard;
+  S.server.audit = [];
+  await runPipeline(null, { fromSeed: true, useCache: false,
+                            note: cleared && cleared.note ? cleared.note : "" });
 }
 
 /* ------------------------------------------------ the client-driven pipeline
@@ -539,15 +570,25 @@ async function doReset() {
    progress strip reports what actually just happened. */
 
 async function runPipeline(file, opts) {
-  const forceScope = !!(opts && opts.forceScope);
+  opts = opts || {};
+  const forceScope = !!opts.forceScope;
+  const useCache = opts.useCache !== false;
   S.uploadFile = file || S.uploadFile;
 
   let doc = null, pageTexts = null, warnings = [];
-  if (file) {
+  if (opts.note) warnings.push(opts.note);
+
+  if (opts.fromSeed) {
+    setPhase("processing", 1, "sample specification");
+    const src = await fetch(apiURL("seed-source")).then(r => r.json())
+      .catch(e => ({ ok: false, error: String(e) }));
+    if (!src.ok) { setFailure("Could not load the sample document.", src.error); return; }
+    doc = src.doc; pageTexts = src.page_texts; S.pageTexts = pageTexts;
+  } else if (file) {
     setPhase("processing", 0, file.name);
     const fd = new FormData();
     fd.append("file", file);
-    const prep = await fetch("/api/prepare", { method: "POST", body: fd })
+    const prep = await fetch(apiURL("prepare"), { method: "POST", body: fd })
       .then(r => r.json()).catch(e => ({ ok: false, error: String(e) }));
     if (!prep.ok) { setFailure(prep.title, prep.error); return; }
     doc = prep.doc; pageTexts = prep.page_texts; warnings = prep.warnings || [];
@@ -558,8 +599,8 @@ async function runPipeline(file, opts) {
   }
 
   setPhase("processing", 3, `${savedSc().name} v${savedSc().version || 1}`);
-  const evRes = await postJSON("/api/evaluate", {
-    scorecard: savedSc(), page_texts: pageTexts, doc_id: doc.id,
+  const evRes = await postJSON("evaluate", {
+    scorecard: savedSc(), page_texts: pageTexts, doc_id: doc.id, use_cache: useCache,
   });
   if (!evRes.ok) { setFailure("Scoring failed.", evRes.error); return; }
   const ev = evRes.evaluation;
@@ -574,8 +615,8 @@ async function runPipeline(file, opts) {
     const raw = [];
     for (let start = 1; start <= pageTexts.length; start += chunk) {
       setPhase("processing", 5, `${Math.min(start + chunk - 1, pageTexts.length)} of ${pageTexts.length} pages · ${raw.length} lines`);
-      const out = await postJSON("/api/extract", {
-        page_texts: pageTexts, start, count: chunk, doc_id: doc.id,
+      const out = await postJSON("extract", {
+        page_texts: pageTexts, start, count: chunk, doc_id: doc.id, use_cache: useCache,
       });
       if (!out.ok) { setFailure("Extraction failed.", out.error); return; }
       raw.push.apply(raw, out.raw_lines);
@@ -583,8 +624,8 @@ async function runPipeline(file, opts) {
     }
     setPhase("processing", 6, `${raw.length} quotes`);
     setPhase("processing", 7, `${raw.length} lines against the SAMPLE catalogue`);
-    const fin = await postJSON("/api/finalize", {
-      raw_lines: raw, page_texts: pageTexts, doc_id: doc.id,
+    const fin = await postJSON("finalize", {
+      raw_lines: raw, page_texts: pageTexts, doc_id: doc.id, use_cache: useCache,
     });
     if (!fin.ok) { setFailure("Verification failed.", fin.error); return; }
     lns = fin.lines;
@@ -618,7 +659,7 @@ async function pageImageFailed(img) {
   const fd = new FormData();
   fd.append("doc_id", docInfo().id);
   fd.append("file", S.uploadFile);
-  const out = await fetch("/api/rehydrate", { method: "POST", body: fd })
+  const out = await fetch(apiURL("rehydrate"), { method: "POST", body: fd })
     .then(r => r.json()).catch(() => ({ ok: false }));
   if (out.ok) img.src = img.src.split("&_r=")[0] + "&_r=1";
 }
@@ -1292,7 +1333,7 @@ function renderViewer(asDrawer) {
     </div>` : ""}
     <div id="pages-box" class="siq-scroll" data-scroll-key="pages-box" style="flex:1;min-height:0;overflow:auto;background:#EDF1F5;padding:14px 0 20px;display:flex;flex-direction:column;align-items:center;gap:14px">
       <div style="position:relative;width:${dispW}px;height:${dispH}px;flex:none;background:#FFF;box-shadow:0 2px 10px rgba(26,37,48,.13);border-radius:3px">
-        <img src="/api/page?doc=${esc(d.id)}&n=${S.page}&scale=${scale}" alt="page ${S.page}"
+        <img src="${esc(apiURL("page", { doc: d.id, n: S.page, scale: scale }))}" alt="page ${S.page}"
           onerror="pageImageFailed(this)" style="width:100%;height:100%;display:block" draggable="false">
         ${overlays}
       </div>
